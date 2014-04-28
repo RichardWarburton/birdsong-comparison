@@ -1,14 +1,14 @@
+package com.insightfullogic.birdsong;
+
 import org.junit.rules.ExternalResource;
 
 /**
  * .
  */
-public class BirdsongRule extends ExternalResource
-{
+public class BirdsongRule extends ExternalResource {
     private Birdsong server;
 
-    protected void before() throws Throwable
-    {
+    protected void before() throws Throwable {
         server = new Birdsong();
         server.start();
     }

@@ -1,3 +1,5 @@
+package com.insightfullogic.birdsong;
+
 import org.apache.http.HttpResponse;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -10,9 +12,6 @@ import static org.junit.Assert.assertEquals;
  * .
  */
 public class AuthenticationTest {
-
-    public static final String user = "richard";
-    public static final String pass = "Gau1suph";
 
     public static final String userToRegister = "b";
     public static final String passToRegister = "c";
@@ -27,7 +26,7 @@ public class AuthenticationTest {
 
     @Test
     public void canAuthenticate() throws IOException {
-        assertHttpOk(auth.login(user, pass));
+        assertHttpOk(auth.login(AuthenticationApi.user, AuthenticationApi.pass));
     }
 
     @Test
@@ -45,10 +44,10 @@ public class AuthenticationTest {
     @Test
     public void cantRegisterDuplicateUsernames() throws IOException {
         Given:
-        assertHttpOk(auth.login(user, pass));
+        assertHttpOk(auth.login(AuthenticationApi.user, AuthenticationApi.pass));
 
         Then:
-        assertHttpForbidden(auth.register(user, pass));
+        assertHttpForbidden(auth.register(AuthenticationApi.user, AuthenticationApi.pass));
     }
 
     @Test
