@@ -1,19 +1,3 @@
-/*
- * Copyright 2014 Real Logic Ltd.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.fluent.Request;
 
@@ -25,15 +9,24 @@ import java.io.IOException;
 public class AuthenticationApi
 {
 
-    private static final String PREFIX = "http://localhost:4567/";
-    private static final String AUTH_URL = PREFIX + "auth/login";
+    private static final String PREFIX = "http://localhost:4567/auth/";
+    private static final String AUTH_URL = PREFIX + "login";
+    private static final String REGISTER_URL = PREFIX + "register";
 
-    public static HttpResponse login(final String username, final String password) throws IOException
+    public HttpResponse login(final String username, final String password) throws IOException
     {
         return Request.Post(AUTH_URL)
                       .addHeader("username", username)
                       .addHeader("password", password)
                       .execute().returnResponse();
+    }
+
+    public HttpResponse register(final String username, final String password) throws IOException
+    {
+        return Request.Post(REGISTER_URL)
+                .addHeader("username", username)
+                .addHeader("password", password)
+                .execute().returnResponse();
     }
 
 }

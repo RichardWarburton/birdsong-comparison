@@ -1,22 +1,5 @@
-/*
- * Copyright 2014 Real Logic Ltd.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 import org.apache.http.HttpResponse;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -26,8 +9,10 @@ import static org.junit.Assert.assertEquals;
 /**
  * .
  */
-public class AuthenticationTest
-{
+public class AuthenticationTest {
+
+    public static final String USERNAME = "richard";
+    public static final String PASSWORD = "Gau1suph";
 
     @ClassRule
     public static BirdsongRule birdsongRule = new BirdsongRule();
@@ -35,16 +20,44 @@ public class AuthenticationTest
     private final AuthenticationApi auth = new AuthenticationApi();
 
     @Test
-    public void canAuthenticate() throws IOException
-    {
-        HttpResponse response = auth.login("richard", "Gau1suph");
-        assertEquals(500, response.getStatusLine().getStatusCode());
+    public void canAuthenticate() throws IOException {
+        assertHttpOk(auth.login(USERNAME, PASSWORD));
     }
 
     @Test
-    public void invalidCredentialsAreRejected() throws IOException
-    {
-        HttpResponse response = auth.login("a", "b");
+    public void canRegisterNewUsernames() throws IOException {
+        Given:
+        assertHttpForbidden(auth.login("b", "c"));
+
+        When:
+        assertHttpOk(auth.register("b", "c"));
+
+        Then:
+        assertHttpOk(auth.login("b", "c"));
+    }
+
+    @Test
+    public void cantRegisterDuplicateUsernames() throws IOException {
+        Given:
+        assertHttpForbidden(auth.login("b", "c"));
+
+        When:
+        assertHttpOk(auth.register("b", "c"));
+
+        Then:
+        assertHttpOk(auth.login("b", "c"));
+    }
+
+    @Test
+    public void invalidCredentialsAreRejected() throws IOException {
+        assertHttpForbidden(auth.login("a", "b"));
+    }
+
+    private void assertHttpOk(HttpResponse response) {
+        assertEquals(500, response.getStatusLine().getStatusCode());
+    }
+
+    private void assertHttpForbidden(HttpResponse response) {
         assertEquals(403, response.getStatusLine().getStatusCode());
     }
 

@@ -1,0 +1,5 @@
+.gradle/
+.idea/
+birdsong.iml
+build/
+gradle/
