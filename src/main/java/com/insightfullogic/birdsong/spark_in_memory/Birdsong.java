@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.function.BiFunction;
 
 import static java.lang.System.currentTimeMillis;
+import static spark.Spark.get;
 import static spark.Spark.post;
 
 /**
@@ -64,7 +65,7 @@ public class Birdsong implements BirdsongService {
             return "";
         })));
 
-        post(route("/listen/", ifAuthenticated((request, response) -> {
+        get(route("/listen/", ifAuthenticated((request, response) -> {
             try (ServletOutputStream out = response.raw().getOutputStream()) {
                 final User user = getUser(request);
                 final FeedGenerator generator = new FeedGenerator(user, out);
@@ -87,6 +88,7 @@ public class Birdsong implements BirdsongService {
     private BiFunction<Request, Response, Object> ifAuthenticated(BiFunction<Request, Response, Object> function) {
         return (request, response) -> {
             final Map<String, String> cookies = request.cookies();
+            System.out.println(request.url() + cookies);
 
             if (areValidCredentials(cookies.get(USERNAME), cookies.get(PASSWORD))) {
                 return function.apply(request, response);
