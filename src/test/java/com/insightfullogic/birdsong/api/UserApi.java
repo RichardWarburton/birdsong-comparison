@@ -1,6 +1,7 @@
 package com.insightfullogic.birdsong.api;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.client.fluent.Form;
 import org.apache.http.client.fluent.Request;
 
 import java.io.IOException;
@@ -12,6 +13,9 @@ public class UserApi {
 
     public static final String user = "richard";
     public static final String pass = "Gau1suph";
+
+    public static final String otherUser = "bob";
+    public static final String otherPass = "Gau1suph";
 
     private final String prefix;
     private final String authPrefix;
@@ -25,22 +29,25 @@ public class UserApi {
         registerUrl = authPrefix + "register";
     }
 
-    public HttpResponse login(final String username, final String password) throws IOException {
-        return Request.Post(loginUrl)
-                .addHeader("username", username)
-                .addHeader("password", password)
-                .execute().returnResponse();
-    }
-
     public void defaultLogin() throws IOException {
         login(user, pass);
     }
 
+    public HttpResponse login(final String username, final String password) throws IOException {
+        return postCredentials(username, password, loginUrl);
+    }
+
     public HttpResponse register(final String username, final String password) throws IOException {
-        return Request.Post(registerUrl)
-                .addHeader("username", username)
-                .addHeader("password", password)
-                .execute().returnResponse();
+        return postCredentials(username, password, registerUrl);
+    }
+
+    private HttpResponse postCredentials(String username, String password, String url) throws IOException {
+        return Request.Post(url)
+                      .bodyForm(Form.form()
+                                    .add("username", username)
+                                    .add("password", password)
+                                    .build())
+                      .execute().returnResponse();
     }
 
 }
