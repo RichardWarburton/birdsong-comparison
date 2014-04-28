@@ -1,4 +1,4 @@
-package com.insightfullogic.birdsong;
+package com.insightfullogic.birdsong.api;
 
 import java.time.Instant;
 import java.util.Optional;

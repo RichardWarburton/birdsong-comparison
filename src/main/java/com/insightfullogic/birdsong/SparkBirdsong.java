@@ -1,3 +1,5 @@
+package com.insightfullogic.birdsong;
+
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -10,9 +12,9 @@ import static spark.Spark.post;
 /**
  * .
  */
-public class Birdsong {
+public class SparkBirdsong implements BirdsongService {
     public static void main(String[] args) {
-        new Birdsong().start();
+        new SparkBirdsong().start();
     }
 
     public void start() {
@@ -22,6 +24,10 @@ public class Birdsong {
             response.status(areValidCredentials(username, password) ? 500 : 403);
             return "";
         }));
+    }
+
+    public SparkBirdsong() {
+
     }
 
     private boolean areValidCredentials(final String username, final String password) {
