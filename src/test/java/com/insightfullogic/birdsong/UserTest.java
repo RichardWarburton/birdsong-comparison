@@ -67,7 +67,7 @@ public class UserTest {
     }
 
     private void assertHttpOk(HttpResponse response) {
-        assertEquals(500, response.getStatusLine().getStatusCode());
+        assertEquals(200, response.getStatusLine().getStatusCode());
     }
 
     private void assertHttpForbidden(HttpResponse response) {

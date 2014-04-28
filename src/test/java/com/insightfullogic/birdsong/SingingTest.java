@@ -3,6 +3,7 @@ package com.insightfullogic.birdsong;
 import com.insightfullogic.birdsong.api.Api;
 import com.insightfullogic.birdsong.api.Song;
 import com.insightfullogic.birdsong.api.SongBook;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -19,15 +20,15 @@ public class SingingTest {
     private static final String soundOfMusic = "The hills are alive with the sound of music...";
     public static final String hiBob = "Hi @" + Users.bob;
 
-    @Rule
-    public static ServiceRule service = new ServiceRule();
+    @ClassRule
+    public static final ServiceRule service = new ServiceRule();
 
     // Forall tests: Given we have two clients and they are logged in
     @Rule
-    private final Api richardsClient = new Api(address, Users.richard, Users.richardsPass);
+    public final Api richardsClient = new Api(Users.richard, Users.richardsPass, address);
 
     @Rule
-    private final Api bobsClient = new Api(address, Users.bob, Users.bobsPass);
+    public final Api bobsClient = new Api(Users.bob, Users.bobsPass, address);
 
     @Test
     public void followersCanHearSong() throws IOException {

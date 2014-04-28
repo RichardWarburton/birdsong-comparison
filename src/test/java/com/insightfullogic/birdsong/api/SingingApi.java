@@ -3,6 +3,7 @@ package com.insightfullogic.birdsong.api;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.entity.ContentType;
 
@@ -23,12 +24,14 @@ public class SingingApi {
     private final String singUrl;
     private final String coverUrl;
     private final String listenUrl;
+    private final Executor executor;
 
     public SingingApi(final String prefix, final UserApi auth) {
         this.auth = auth;
         singUrl = prefix + "/sing";
         coverUrl = prefix + "/cover/";
         listenUrl = prefix + "/listen/";
+        executor = auth.getExecutor();
     }
 
     public HttpResponse sing(final String song) throws IOException {
@@ -44,10 +47,10 @@ public class SingingApi {
     }
 
     public SongBook listen(final Cursor since) throws IOException {
-        final InputStream content = Request.Get(listenUrl + since)
-                                           .execute()
-                                           .returnContent()
-                                           .asStream();
+        //  + since
+        final InputStream content = executor.execute(Request.Get(listenUrl))
+                                            .returnContent()
+                                            .asStream();
 
         JsonParser parser = factory.createParser(content);
         Cursor to = null;
@@ -117,10 +120,8 @@ public class SingingApi {
     }
 
     private HttpResponse postText(final String song, final String url) throws IOException {
-        return Request.Post(url)
-                .bodyString(song, ContentType.TEXT_PLAIN)
-                .execute()
-                .returnResponse();
+        return executor.execute(Request.Post(url).bodyString(song, ContentType.TEXT_PLAIN))
+                       .returnResponse();
     }
 
 }
