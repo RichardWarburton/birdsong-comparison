@@ -11,12 +11,6 @@ import java.io.IOException;
  */
 public class UserApi {
 
-    public static final String richard = "richard";
-    public static final String richardsPass = "Gau1suph";
-
-    public static final String bob = "bob";
-    public static final String bobsPass = "Gau1suph";
-
     private final String prefix;
     private final String authPrefix;
     private final String loginUrl;
@@ -25,7 +19,7 @@ public class UserApi {
 
     public UserApi(final String prefix) {
         this.prefix = prefix;
-        authPrefix = prefix + "richard/";
+        authPrefix = prefix + "user/";
         loginUrl = authPrefix + "login";
         registerUrl = authPrefix + "register";
         followUrl = authPrefix + "follow";

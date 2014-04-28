@@ -28,7 +28,7 @@ public class UserTest {
 
     @Test
     public void canAuthenticate() throws IOException {
-        assertHttpOk(auth.login(UserApi.richard, UserApi.richardsPass));
+        assertHttpOk(auth.login(Users.richard, Users.richardsPass));
     }
 
     @Test
@@ -46,19 +46,19 @@ public class UserTest {
     @Test
     public void cantRegisterDuplicateUsernames() throws IOException {
         Given:
-        assertHttpOk(auth.login(UserApi.richard, UserApi.richardsPass));
+        assertHttpOk(auth.login(Users.richard, Users.richardsPass));
 
         Then:
-        assertHttpForbidden(auth.register(UserApi.richard, UserApi.richardsPass));
+        assertHttpForbidden(auth.register(Users.richard, Users.richardsPass));
     }
 
     @Test
     public void canFollowAnotherUser() throws IOException {
         Given:
-        assertHttpOk(auth.login(UserApi.richard, UserApi.richardsPass));
+        assertHttpOk(auth.login(Users.richard, Users.richardsPass));
 
         Then:
-        assertHttpOk(auth.follow(UserApi.bob));
+        assertHttpOk(auth.follow(Users.bob));
     }
 
     @Test

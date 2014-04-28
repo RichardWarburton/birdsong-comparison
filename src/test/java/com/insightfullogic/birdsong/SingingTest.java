@@ -11,29 +11,28 @@ import java.time.Instant;
 import java.util.List;
 
 import static com.insightfullogic.birdsong.BirdsongService.address;
-import static com.insightfullogic.birdsong.api.UserApi.*;
 import static org.junit.Assert.*;
 
 public class SingingTest {
 
     private static final String doReMi = "doe a deer a female deer";
     private static final String soundOfMusic = "The hills are alive with the sound of music...";
-    public static final String hiBob = "Hi @" + bob;
+    public static final String hiBob = "Hi @" + Users.bob;
 
     @Rule
     public static ServiceRule service = new ServiceRule();
 
     // Forall tests: Given we have two clients and they are logged in
     @Rule
-    private final Api richardsClient = new Api(address, richard, richardsPass);
+    private final Api richardsClient = new Api(address, Users.richard, Users.richardsPass);
 
     @Rule
-    private final Api bobsClient = new Api(address, bob, bobsPass);
+    private final Api bobsClient = new Api(address, Users.bob, Users.bobsPass);
 
     @Test
     public void followersCanHearSong() throws IOException {
         Given:
-        bobsClient.users.follow(richard);
+        bobsClient.users.follow(Users.richard);
 
         Instant before = Instant.now();
 
@@ -46,7 +45,7 @@ public class SingingTest {
         assertEquals(1, songs.feed().size());
 
         Song song = songs.feed().get(0);
-        assertEquals(richard, song.getSinger());
+        assertEquals(Users.richard, song.getSinger());
         assertEquals(doReMi, song.getSong());
         assertFalse(song.getCovers().isPresent());
         assertTrue(before.isBefore(song.getTimestamp()));
@@ -86,7 +85,7 @@ public class SingingTest {
         assertEquals(1,notifies.size());
 
         Song song = notifies.get(0);
-        assertEquals(richard, song.getSinger());
+        assertEquals(Users.richard, song.getSinger());
         assertEquals(hiBob, song.getSong());
         assertFalse(song.getCovers().isPresent());
     }
