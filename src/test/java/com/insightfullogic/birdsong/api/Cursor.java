@@ -4,6 +4,8 @@ import java.util.Objects;
 
 public final class Cursor {
 
+    public static Cursor forever = new Cursor("-1");
+
     private final long value;
 
     Cursor(final String value) {

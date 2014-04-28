@@ -1,7 +1,9 @@
 package com.insightfullogic.birdsong.api;
 
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.Objects;
+
+import static java.util.Collections.emptyList;
 
 public class SongBook {
 
@@ -11,10 +13,16 @@ public class SongBook {
     private final List<Song> notifies;
 
     public SongBook(final Cursor from, final Cursor to, final List<Song> feed, final List<Song> notifies) {
+        Objects.requireNonNull(from);
+        Objects.requireNonNull(to);
         this.from = from;
         this.to = to;
-        this.feed = feed;
-        this.notifies = notifies;
+        this.feed = nonNull(feed);
+        this.notifies = nonNull(notifies);
+    }
+
+    private List<Song> nonNull(List<Song> value) {
+        return value == null ? emptyList() : value;
     }
 
     public Cursor getFrom() {
@@ -25,11 +33,11 @@ public class SongBook {
         return to;
     }
 
-    public Stream<Song> feed() {
-        return feed.stream();
+    public List<Song> feed() {
+        return feed;
     }
 
-    public Stream<Song> notifies() {
-        return notifies.stream();
+    public List<Song> notifies() {
+        return notifies;
     }
 }

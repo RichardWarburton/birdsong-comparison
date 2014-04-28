@@ -7,13 +7,13 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-import static com.insightfullogic.birdsong.BirdsongService.ADDRESS;
+import static com.insightfullogic.birdsong.BirdsongService.address;
 import static org.junit.Assert.assertEquals;
 
 /**
  * .
  */
-public class AuthenticationTest {
+public class UserTest {
 
     public static final String userToRegister = "b";
     public static final String passToRegister = "c";
@@ -24,11 +24,11 @@ public class AuthenticationTest {
     @ClassRule
     public static ServiceRule birdsongRule = new ServiceRule();
 
-    private final UserApi auth = new UserApi(ADDRESS);
+    private final UserApi auth = new UserApi(address);
 
     @Test
     public void canAuthenticate() throws IOException {
-        assertHttpOk(auth.login(UserApi.user, UserApi.pass));
+        assertHttpOk(auth.login(UserApi.richard, UserApi.richardsPass));
     }
 
     @Test
@@ -46,10 +46,19 @@ public class AuthenticationTest {
     @Test
     public void cantRegisterDuplicateUsernames() throws IOException {
         Given:
-        assertHttpOk(auth.login(UserApi.user, UserApi.pass));
+        assertHttpOk(auth.login(UserApi.richard, UserApi.richardsPass));
 
         Then:
-        assertHttpForbidden(auth.register(UserApi.user, UserApi.pass));
+        assertHttpForbidden(auth.register(UserApi.richard, UserApi.richardsPass));
+    }
+
+    @Test
+    public void canFollowAnotherUser() throws IOException {
+        Given:
+        assertHttpOk(auth.login(UserApi.richard, UserApi.richardsPass));
+
+        Then:
+        assertHttpOk(auth.follow(UserApi.bob));
     }
 
     @Test

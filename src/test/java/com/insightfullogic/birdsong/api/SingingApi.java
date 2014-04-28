@@ -5,7 +5,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.entity.ContentType;
-import org.junit.rules.ExternalResource;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,7 +14,7 @@ import java.util.List;
 import static com.fasterxml.jackson.core.JsonToken.END_ARRAY;
 import static com.fasterxml.jackson.core.JsonToken.END_OBJECT;
 
-public class SingingApi extends ExternalResource {
+public class SingingApi {
 
     private static final JsonFactory factory = new JsonFactory();
 
@@ -32,17 +31,16 @@ public class SingingApi extends ExternalResource {
         listenUrl = prefix + "/listen/";
     }
 
-    @Override
-    protected void before() throws IOException {
-        auth.defaultLogin();
-    }
-
     public HttpResponse sing(final String song) throws IOException {
         return postText(song, singUrl);
     }
 
     public HttpResponse cover(final String song, final SongId original) throws IOException {
         return postText(song, coverUrl + original);
+    }
+
+    public SongBook listen() throws IOException {
+        return listen(Cursor.forever);
     }
 
     public SongBook listen(final Cursor since) throws IOException {
