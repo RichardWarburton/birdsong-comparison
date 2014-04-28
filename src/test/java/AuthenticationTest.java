@@ -11,8 +11,14 @@ import static org.junit.Assert.assertEquals;
  */
 public class AuthenticationTest {
 
-    public static final String USERNAME = "richard";
-    public static final String PASSWORD = "Gau1suph";
+    public static final String user = "richard";
+    public static final String pass = "Gau1suph";
+
+    public static final String userToRegister = "b";
+    public static final String passToRegister = "c";
+
+    public static final String unknownUser = "a";
+    public static final String unknownPass = "b";
 
     @ClassRule
     public static BirdsongRule birdsongRule = new BirdsongRule();
@@ -21,36 +27,33 @@ public class AuthenticationTest {
 
     @Test
     public void canAuthenticate() throws IOException {
-        assertHttpOk(auth.login(USERNAME, PASSWORD));
+        assertHttpOk(auth.login(user, pass));
     }
 
     @Test
     public void canRegisterNewUsernames() throws IOException {
         Given:
-        assertHttpForbidden(auth.login("b", "c"));
+        assertHttpForbidden(auth.login(userToRegister, passToRegister));
 
         When:
-        assertHttpOk(auth.register("b", "c"));
+        assertHttpOk(auth.register(userToRegister, passToRegister));
 
         Then:
-        assertHttpOk(auth.login("b", "c"));
+        assertHttpOk(auth.login(userToRegister, passToRegister));
     }
 
     @Test
     public void cantRegisterDuplicateUsernames() throws IOException {
         Given:
-        assertHttpForbidden(auth.login("b", "c"));
-
-        When:
-        assertHttpOk(auth.register("b", "c"));
+        assertHttpOk(auth.login(user, pass));
 
         Then:
-        assertHttpOk(auth.login("b", "c"));
+        assertHttpForbidden(auth.register(user, pass));
     }
 
     @Test
     public void invalidCredentialsAreRejected() throws IOException {
-        assertHttpForbidden(auth.login("a", "b"));
+        assertHttpForbidden(auth.login(unknownUser, unknownPass));
     }
 
     private void assertHttpOk(HttpResponse response) {
