@@ -2,7 +2,7 @@ package com.insightfullogic.birdsong.api;
 
 import java.util.Objects;
 
-public final class Cursor implements Comparable<Cursor> {
+public final class Cursor {
 
     private final long value;
 
@@ -26,10 +26,5 @@ public final class Cursor implements Comparable<Cursor> {
     @Override
     public String toString() {
         return String.valueOf(value);
-    }
-
-    @Override
-    public int compareTo(Cursor other) {
-        return Long.compare(value, other.value);
     }
 }
