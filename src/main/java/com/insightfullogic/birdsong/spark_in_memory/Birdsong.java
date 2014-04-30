@@ -1,11 +1,7 @@
 package com.insightfullogic.birdsong.spark_in_memory;
 
-import com.insightfullogic.birdsong.BirdsongService;
 import com.insightfullogic.birdsong.Users;
-import spark.QueryParamsMap;
-import spark.Request;
-import spark.Response;
-import spark.Route;
+import spark.*;
 
 import javax.servlet.ServletOutputStream;
 import java.io.IOException;
@@ -20,13 +16,13 @@ import static spark.Spark.post;
 /**
  * Trivial, Dumb, In-memory, Ill factored implementation
  */
-public class Birdsong implements BirdsongService {
+public class Birdsong {
 
     public static final String USERNAME = "username";
     public static final String PASSWORD = "password";
 
     public static void main(String[] args) {
-        new Birdsong().start();
+        new Birdsong();
     }
 
     private final Map<String, User> users;
@@ -35,13 +31,7 @@ public class Birdsong implements BirdsongService {
         users = new HashMap<>();
         addUser(Users.richard, Users.richardsPass);
         addUser(Users.bob, Users.bobsPass);
-    }
 
-    private void addUser(String username, String password) {
-        users.put(username, new User(username, password));
-    }
-
-    public void start() {
         post(route("/user/login", withCredentials(this::areValidCredentials)));
         post(route("/user/register", withCredentials(this::registerCredentials)));
 
@@ -78,6 +68,10 @@ public class Birdsong implements BirdsongService {
 
             return "";
         })));
+    }
+
+    private void addUser(String username, String password) {
+        users.put(username, new User(username, password));
     }
 
     private User getUser(Request request) {
@@ -129,17 +123,6 @@ public class Birdsong implements BirdsongService {
     private boolean areValidCredentials(String username, String password) {
         User user = users.get(username);
         return user != null && user.hasPassword(password);
-    }
-
-    public void stop() {
-        // TODO: fix this
-        // Horrific Hack required by framework
-        try {
-            //Spark.class.getMethod("clearRoutes").invoke(null);
-            //Spark.class.getMethod("stop").invoke(null);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     private static Route route(String url, BiFunction<Request, Response, Object> handle) {

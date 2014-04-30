@@ -32,6 +32,8 @@ public class SingingTest {
 
     @Test
     public void followersCanHearSong() throws IOException {
+        SongBook songs;
+
         Given:
         bobsClient.users.follow(Users.richard);
 
@@ -41,8 +43,9 @@ public class SingingTest {
         richardsClient.singing.sing(doReMi);
         Instant after = Instant.now();
 
-        // Then
-        SongBook songs = bobsClient.singing.listen();
+
+        Then:
+        songs = bobsClient.singing.listen();
         assertEquals(1, songs.feed().size());
 
         Song song = songs.feed().get(0);
@@ -55,11 +58,13 @@ public class SingingTest {
 
     @Test
     public void onlyFollowersCanHearSongs() throws IOException {
+        SongBook songs;
+
         When:
         richardsClient.singing.sing(doReMi);
 
-        // Then
-        SongBook songs = bobsClient.singing.listen();
+        Then:
+        songs = bobsClient.singing.listen();
         assertTrue(songs.feed().isEmpty());
         assertTrue(songs.notifies().isEmpty());
     }
