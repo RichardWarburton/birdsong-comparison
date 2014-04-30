@@ -1,14 +1,14 @@
 package com.insightfullogic.birdsong;
 
 import com.insightfullogic.birdsong.api.UserApi;
-import org.apache.http.HttpResponse;
 import org.junit.ClassRule;
 import org.junit.Test;
 
 import java.io.IOException;
 
 import static com.insightfullogic.birdsong.BirdsongService.address;
-import static org.junit.Assert.assertEquals;
+import static com.insightfullogic.birdsong.HttpAsserts.assertHttpForbidden;
+import static com.insightfullogic.birdsong.HttpAsserts.assertHttpOk;
 
 /**
  * .
@@ -64,14 +64,6 @@ public class UserTest {
     @Test
     public void invalidCredentialsAreRejected() throws IOException {
         assertHttpForbidden(auth.login(unknownUser, unknownPass));
-    }
-
-    private void assertHttpOk(HttpResponse response) {
-        assertEquals(200, response.getStatusLine().getStatusCode());
-    }
-
-    private void assertHttpForbidden(HttpResponse response) {
-        assertEquals(403, response.getStatusLine().getStatusCode());
     }
 
 }

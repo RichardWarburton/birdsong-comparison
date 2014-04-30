@@ -1,9 +1,11 @@
 package com.insightfullogic.birdsong.api;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.client.CookieStore;
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Form;
 import org.apache.http.client.fluent.Request;
+import org.apache.http.impl.client.BasicCookieStore;
 
 import java.io.IOException;
 
@@ -18,6 +20,7 @@ public class UserApi {
     private final String registerUrl;
     private final String followUrl;
 
+    private final CookieStore cookies;
     private final Executor executor;
 
     public UserApi(final String prefix) {
@@ -27,11 +30,16 @@ public class UserApi {
         registerUrl = authPrefix + "register";
         followUrl = authPrefix + "follow";
 
-        executor = Executor.newInstance();
+        cookies = new BasicCookieStore();
+        executor = Executor.newInstance().cookieStore(cookies);
     }
 
     public Executor getExecutor() {
         return executor;
+    }
+
+    public CookieStore getCookies() {
+        return cookies;
     }
 
     public HttpResponse login(final String username, final String password) throws IOException {

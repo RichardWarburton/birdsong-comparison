@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static java.lang.System.currentTimeMillis;
 import static spark.Spark.get;
@@ -20,6 +22,11 @@ public class Birdsong {
 
     public static final String USERNAME = "username";
     public static final String PASSWORD = "password";
+
+    public static final String AUTH_USERNAME = "authenticatedUsername";
+    public static final String AUTH_PASSWORD = "authenticatedPassword";
+
+    private static final Pattern mentions = Pattern.compile("@([^ ]+)");
 
     public static void main(String[] args) {
         new Birdsong();
@@ -50,6 +57,7 @@ public class Birdsong {
             final User user = getUser(request);
             Song song = new Song(SongId.next(), user.getUsername(), request.body(), currentTimeMillis());
             user.sing(song);
+            findMentions(song);
 
             response.status(200);
             return "";
@@ -70,21 +78,28 @@ public class Birdsong {
         })));
     }
 
+    private void findMentions(Song song) {
+        final String lyrics = song.getLyrics();
+        final Matcher matcher = mentions.matcher(lyrics);
+        while (matcher.find()) {
+            final String name = matcher.group(1);
+            users.get(name).pushNotification(song);
+        }
+    }
+
     private void addUser(String username, String password) {
         users.put(username, new User(username, password));
     }
 
     private User getUser(Request request) {
-        final Map<String, String> cookies = request.cookies();
-        return users.get(cookies.get(USERNAME));
+        return users.get(request.cookie(AUTH_USERNAME));
     }
 
     private BiFunction<Request, Response, Object> ifAuthenticated(BiFunction<Request, Response, Object> function) {
         return (request, response) -> {
             final Map<String, String> cookies = request.cookies();
-            System.out.println(request.url() + cookies);
 
-            if (areValidCredentials(cookies.get(USERNAME), cookies.get(PASSWORD))) {
+            if (areValidCredentials(cookies.get(AUTH_USERNAME), cookies.get(AUTH_PASSWORD))) {
                 return function.apply(request, response);
             }
 
@@ -102,13 +117,17 @@ public class Birdsong {
             final boolean ok = function.apply(username, password);
 
             if (ok) {
-                response.cookie(USERNAME, username);
-                response.cookie(PASSWORD, password);
+                setCookie(response, username, AUTH_USERNAME);
+                setCookie(response, password, AUTH_PASSWORD);
             }
 
             response.status(ok ? 200 : 403);
             return "";
         };
+    }
+
+    private void setCookie(Response response, String value, String key) {
+        response.cookie("/", key, value, 1, false);
     }
 
     private boolean registerCredentials(String username, String password) {

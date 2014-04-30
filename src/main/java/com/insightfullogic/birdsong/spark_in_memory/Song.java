@@ -27,7 +27,7 @@ public class Song {
         return singer;
     }
 
-    public String getSong() {
+    public String getLyrics() {
         return song;
     }
 

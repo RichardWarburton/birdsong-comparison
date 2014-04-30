@@ -4,6 +4,8 @@ import org.junit.rules.ExternalResource;
 
 import java.io.IOException;
 
+import static com.insightfullogic.birdsong.HttpAsserts.assertHttpOk;
+
 public class Api extends ExternalResource {
 
     private final String username;
@@ -21,7 +23,6 @@ public class Api extends ExternalResource {
 
     @Override
     protected void before() throws IOException {
-        users.login(username, password);
+        assertHttpOk(users.login(username, password));
     }
-
 }

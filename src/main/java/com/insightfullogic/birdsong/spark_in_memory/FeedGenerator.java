@@ -23,17 +23,21 @@ public class FeedGenerator {
         generator.writeStartObject();
         generator.writeStringField("to", "1");
         generateFeed("feed", user.getFeed());
-        generateFeed("notifies", user.getFeed());
+        generateFeed("notifies", user.getNotifications());
         generator.writeEndObject();
+        generator.flush();
+        generator.close();
     }
 
     private void generateFeed(String name, List<Song> feed) throws IOException {
         generator.writeArrayFieldStart(name);
         for (Song song : feed) {
+            generator.writeStartObject();
             generator.writeStringField("id", "1");
             generator.writeStringField("singer", song.getSinger());
-            generator.writeStringField("song", song.getSong());
+            generator.writeStringField("song", song.getLyrics());
             generator.writeNumberField("timestamp", song.getTimestamp().toEpochMilli());
+            generator.writeEndObject();
         }
         generator.writeEndArray();
     }

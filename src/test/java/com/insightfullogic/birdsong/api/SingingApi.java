@@ -2,18 +2,21 @@ package com.insightfullogic.birdsong.api;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.CookieStore;
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Request;
-import org.apache.http.entity.ContentType;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.fasterxml.jackson.core.JsonToken.END_ARRAY;
-import static com.fasterxml.jackson.core.JsonToken.END_OBJECT;
+import static com.fasterxml.jackson.core.JsonToken.*;
+import static org.apache.http.entity.ContentType.TEXT_PLAIN;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 
 public class SingingApi {
 
@@ -24,7 +27,9 @@ public class SingingApi {
     private final String singUrl;
     private final String coverUrl;
     private final String listenUrl;
+
     private final Executor executor;
+    private final CookieStore cookies;
 
     public SingingApi(final String prefix, final UserApi auth) {
         this.auth = auth;
@@ -32,6 +37,7 @@ public class SingingApi {
         coverUrl = prefix + "/cover/";
         listenUrl = prefix + "/listen/";
         executor = auth.getExecutor();
+        cookies = auth.getCookies();
     }
 
     public HttpResponse sing(final String song) throws IOException {
@@ -53,13 +59,26 @@ public class SingingApi {
                                             .asStream();
 
         JsonParser parser = factory.createParser(content);
+
+        // This makes me want to vomit
+        // TODO: refactor
         Cursor to = null;
         List<Song> feed = null;
         List<Song> notifies = null;
+        parser.nextToken(); // {
         while (parser.nextToken() != END_OBJECT) {
+            final JsonToken token = parser.getCurrentToken();
+            if (token == null) {
+                break;
+            }
+
             final String name = parser.getCurrentName();
+            if (name == null) {
+                throw new IllegalStateException("No name for: " + token);
+            }
             switch (name) {
                 case "to":
+                    parser.nextToken();
                     to = new Cursor(parser.getText());
                     break;
                 case "feed":
@@ -78,11 +97,10 @@ public class SingingApi {
 
     private List<Song> readSongs(final JsonParser parser) throws IOException {
         List<Song> songs = new ArrayList<>();
-        parser.nextToken(); // [
+        assertThat(parser.getCurrentToken(), is(START_ARRAY));
         while (parser.nextToken() != END_ARRAY) {
             songs.add(readSong(parser));
         }
-        parser.nextToken(); // ]
         return songs;
     }
 
@@ -93,8 +111,10 @@ public class SingingApi {
         long timestamp = -1;
         SongId covers = null;
 
+        assertThat(parser.getCurrentToken(), is(START_OBJECT));
         while (parser.nextToken() != END_OBJECT) {
             final String name = parser.getCurrentName();
+            parser.nextToken();
             switch (name) {
                 case "id":
                     id = new SongId(parser.getText());
@@ -120,7 +140,7 @@ public class SingingApi {
     }
 
     private HttpResponse postText(final String song, final String url) throws IOException {
-        return executor.execute(Request.Post(url).bodyString(song, ContentType.TEXT_PLAIN))
+        return executor.execute(Request.Post(url).bodyString(song, TEXT_PLAIN))
                        .returnResponse();
     }
 
