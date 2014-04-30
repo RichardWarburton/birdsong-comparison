@@ -7,6 +7,7 @@ import javax.servlet.ServletOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,6 +29,8 @@ public class Birdsong {
 
     private static final Pattern mentions = Pattern.compile("@([^ ]+)");
 
+    public static interface Handle extends BiConsumer<Request, Response> {}
+
     public static void main(String[] args) {
         new Birdsong();
     }
@@ -46,11 +49,8 @@ public class Birdsong {
             final QueryParamsMap params = request.queryMap();
             final User toFollow = users.get(params.get(USERNAME).value());
             final User follower = getUser(request);
-
             toFollow.newFollower(follower);
-
             response.status(200);
-            return "";
         })));
 
         post(route("/sing", ifAuthenticated((request, response) -> {
@@ -58,9 +58,7 @@ public class Birdsong {
             Song song = new Song(SongId.next(), user.getUsername(), request.body(), currentTimeMillis());
             user.sing(song);
             findMentions(song);
-
             response.status(200);
-            return "";
         })));
 
         get(route("/listen/", ifAuthenticated((request, response) -> {
@@ -73,8 +71,6 @@ public class Birdsong {
                 e.printStackTrace();
                 response.status(500);
             }
-
-            return "";
         })));
     }
 
@@ -95,34 +91,27 @@ public class Birdsong {
         return users.get(request.cookie(AUTH_USERNAME));
     }
 
-    private BiFunction<Request, Response, Object> ifAuthenticated(BiFunction<Request, Response, Object> function) {
+    private Handle ifAuthenticated(Handle function) {
         return (request, response) -> {
-            final Map<String, String> cookies = request.cookies();
-
-            if (areValidCredentials(cookies.get(AUTH_USERNAME), cookies.get(AUTH_PASSWORD))) {
-                return function.apply(request, response);
+            if (areValidCredentials(request.cookie(AUTH_USERNAME), request.cookie(AUTH_PASSWORD))) {
+                function.accept(request, response);
+            } else {
+                response.status(403);
             }
-
-            response.status(403);
-            return "";
         };
     }
 
-    private BiFunction<Request, Response, Object> withCredentials(BiFunction<String, String, Boolean> function) {
+    private Handle withCredentials(BiFunction<String, String, Boolean> function) {
         return (request, response) -> {
             final QueryParamsMap params = request.queryMap();
             String username = params.get(USERNAME).value();
             String password = params.get(PASSWORD).value();
-
             final boolean ok = function.apply(username, password);
-
             if (ok) {
                 setCookie(response, username, AUTH_USERNAME);
                 setCookie(response, password, AUTH_PASSWORD);
             }
-
             response.status(ok ? 200 : 403);
-            return "";
         };
     }
 
@@ -144,10 +133,11 @@ public class Birdsong {
         return user != null && user.hasPassword(password);
     }
 
-    private static Route route(String url, BiFunction<Request, Response, Object> handle) {
+    private static Route route(String url, Handle handle) {
         return new Route(url) {
             public Object handle(Request request, Response response) {
-                return handle.apply(request, response);
+                handle.accept(request, response);
+                return "";
             }
         };
     }
