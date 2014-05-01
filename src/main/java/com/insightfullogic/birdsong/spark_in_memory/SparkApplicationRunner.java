@@ -1,11 +1,11 @@
 package com.insightfullogic.birdsong.spark_in_memory;
 
-import com.insightfullogic.birdsong.BirdsongService;
+import com.insightfullogic.birdsong.BirdsongApplicationRunner;
 import spark.BrokenApiWorkaround;
 
 import static java.util.Objects.requireNonNull;
 
-public class SparkApplicationRunner implements BirdsongService {
+public class SparkApplicationRunner implements BirdsongApplicationRunner {
 
     private Birdsong application = null;
 
@@ -22,5 +22,10 @@ public class SparkApplicationRunner implements BirdsongService {
         requireNonNull(application, "Application not started");
         BrokenApiWorkaround.stop();
         application = null;
+    }
+
+    @Override
+    public long getStartupPauseInMilliseconds() {
+        return 500;
     }
 }

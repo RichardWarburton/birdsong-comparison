@@ -8,7 +8,7 @@ import org.junit.rules.ExternalResource;
  */
 public class ServiceRule extends ExternalResource {
 
-    private final BirdsongService service;
+    private final BirdsongApplicationRunner service;
 
     public ServiceRule() {
         this.service = new SparkApplicationRunner();
@@ -22,7 +22,7 @@ public class ServiceRule extends ExternalResource {
     // This is horrific
     private void pauseToAllowStartup() {
         try {
-            Thread.sleep(100);
+            Thread.sleep(service.getStartupPauseInMilliseconds());
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-import static com.insightfullogic.birdsong.BirdsongService.address;
+import static com.insightfullogic.birdsong.BirdsongApplicationRunner.address;
 import static com.insightfullogic.birdsong.HttpAsserts.assertHttpForbidden;
 import static com.insightfullogic.birdsong.HttpAsserts.assertHttpOk;
 

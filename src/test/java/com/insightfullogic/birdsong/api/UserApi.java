@@ -14,7 +14,6 @@ import java.io.IOException;
  */
 public class UserApi {
 
-    private final String prefix;
     private final String authPrefix;
     private final String loginUrl;
     private final String registerUrl;
@@ -24,7 +23,6 @@ public class UserApi {
     private final Executor executor;
 
     public UserApi(final String prefix) {
-        this.prefix = prefix;
         authPrefix = prefix + "user/";
         loginUrl = authPrefix + "login";
         registerUrl = authPrefix + "register";
@@ -36,10 +34,6 @@ public class UserApi {
 
     public Executor getExecutor() {
         return executor;
-    }
-
-    public CookieStore getCookies() {
-        return cookies;
     }
 
     public HttpResponse login(final String username, final String password) throws IOException {

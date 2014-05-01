@@ -11,7 +11,7 @@ public class Song {
     private final Instant timestamp;
     private final Optional<SongId> covers;
 
-    public Song(final SongId id, final String singer, final String song, final long timestamp, final SongId covers) {
+    private Song(final SongId id, final String singer, final String song, final long timestamp, final SongId covers) {
         this.singer = singer;
         this.song = song;
         this.id = id;
@@ -34,4 +34,38 @@ public class Song {
     public Optional<SongId> getCovers() {
         return covers;
     }
+
+    public static class SongFactory {
+
+        private SongId id;
+        private String singer;
+        private String song;
+        private long timestamp = -1;
+        private SongId covers;
+
+        public void setSinger(String singer) {
+            this.singer = singer;
+        }
+
+        public void setCovers(String covers) {
+            this.covers = new SongId(covers);
+        }
+
+        public void setTimestamp(long timestamp) {
+            this.timestamp = timestamp;
+        }
+
+        public void setSong(String song) {
+            this.song = song;
+        }
+
+        public void setId(String id) {
+            this.id = new SongId(id);
+        }
+
+        public Song make() {
+            return new Song(id, singer, song, timestamp, covers);
+        }
+    }
+
 }

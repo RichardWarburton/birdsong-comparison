@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
 
-import static com.insightfullogic.birdsong.BirdsongService.address;
+import static com.insightfullogic.birdsong.BirdsongApplicationRunner.address;
 import static com.insightfullogic.birdsong.HttpAsserts.assertHttpOk;
 import static com.insightfullogic.birdsong.Users.*;
 import static org.junit.Assert.*;
