@@ -6,6 +6,8 @@ repositories {
     mavenCentral()
 }
 
+defaultTasks 'clean', 'build'
+
 dependencies {
     compile group: 'com.sparkjava', name: 'spark-core', version: '1.1.1'
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.3.2'
