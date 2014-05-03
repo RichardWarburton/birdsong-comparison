@@ -13,20 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.insightfullogic.birdsong.spark_in_memory;
+package com.insightfullogic.birdsong;
 
-import com.insightfullogic.birdsong.ServiceRule;
-import com.insightfullogic.birdsong.SingingSpec;
-import com.insightfullogic.birdsong.UserSpec;
-import org.junit.BeforeClass;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.rules.ExternalResource;
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({UserSpec.class, SingingSpec.class})
-public class SpecificationSuite {
-    @BeforeClass
-    public static void setup() {
-        ServiceRule.setService(new SparkApplicationRunner());
+/**
+ * .
+ */
+public class ResetRule extends ExternalResource {
+
+    @Override
+    protected void before() throws Throwable {
+        ServiceRule.getService().reset();
     }
+
 }

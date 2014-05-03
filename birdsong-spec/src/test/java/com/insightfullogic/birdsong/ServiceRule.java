@@ -9,6 +9,10 @@ public class ServiceRule extends ExternalResource {
 
     private static BirdsongApplicationRunner service;
 
+    public static BirdsongApplicationRunner getService() {
+        return service;
+    }
+
     public static void setService(BirdsongApplicationRunner service) {
         ServiceRule.service = service;
     }

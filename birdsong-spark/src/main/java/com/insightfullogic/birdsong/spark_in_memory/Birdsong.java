@@ -15,7 +15,6 @@ import java.util.regex.Pattern;
 
 import static java.lang.Long.parseLong;
 import static java.lang.System.currentTimeMillis;
-import static java.lang.System.load;
 import static spark.Spark.get;
 import static spark.Spark.post;
 
@@ -46,8 +45,7 @@ public class Birdsong {
         users = new HashMap<>();
         originalUser = new HashMap<>();
 
-        addUser(Users.richard, Users.richardsPass);
-        addUser(Users.bob, Users.bobsPass);
+        reset();
 
         post(route("/user/login", withCredentials(this::areValidCredentials)));
         post(route("/user/register", withCredentials(this::registerCredentials)));
@@ -84,6 +82,14 @@ public class Birdsong {
             String since = request.params("since");
             listen(request, parseLong(since), response);
         })));
+    }
+
+    public void reset() {
+        users.clear();
+        originalUser.clear();
+
+        addUser(Users.richard, Users.richardsPass);
+        addUser(Users.bob, Users.bobsPass);
     }
 
     private void listen(Request request, long since, Response response) {

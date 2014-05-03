@@ -2,6 +2,7 @@ package com.insightfullogic.birdsong;
 
 import com.insightfullogic.birdsong.api.UserApi;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -23,6 +24,9 @@ public class UserSpec {
 
     @ClassRule
     public static ServiceRule birdsongRule = new ServiceRule();
+
+    @Rule
+    public ResetRule reset = new ResetRule();
 
     private final UserApi auth = new UserApi(address);
 

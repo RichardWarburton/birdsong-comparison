@@ -1,6 +1,7 @@
 package com.insightfullogic.birdsong;
 
 import com.insightfullogic.birdsong.api.*;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
@@ -27,10 +28,13 @@ public class SingingSpec {
     public final Api richardsClient = new Api(richard, richardsPass, address);
     public final Api bobsClient = new Api(bob, bobsPass, address);
 
+    @ClassRule
+    public static ServiceRule service = new ServiceRule();
+
     @Rule
-    public final TestRule rules = RuleChain.outerRule(new ServiceRule())
-                                           .around(richardsClient)
-                                           .around(bobsClient);
+    public TestRule rules = RuleChain.outerRule(new ResetRule())
+                                     .around(richardsClient)
+                                     .around(bobsClient);
 
     @Test
     public void followersCanHearSong() throws IOException {

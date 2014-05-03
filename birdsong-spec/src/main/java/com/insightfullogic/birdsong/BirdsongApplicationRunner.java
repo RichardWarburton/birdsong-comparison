@@ -14,4 +14,5 @@ public interface BirdsongApplicationRunner {
      */
     public long getStartupPauseInMilliseconds();
 
+    public void reset();
 }
