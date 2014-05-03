@@ -25,6 +25,6 @@ public class SomeClassTest {
     @Test
     public void forceThings()
     {
-        
+
     }
 }

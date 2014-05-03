@@ -1,1 +1,2 @@
-include 'birdsong-spec', 'birdsong-spark'
+include 'birdsong-spec', 'birdsong-z-spark' 
+

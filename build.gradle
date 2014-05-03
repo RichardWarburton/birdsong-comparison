@@ -1,7 +1,5 @@
 defaultTasks 'clean', 'build'
 
-group = 'com.insightfullogic'
-
 subprojects {
     apply plugin: 'java'
 
@@ -11,6 +9,8 @@ subprojects {
     }
 
     compileJava.options.encoding = 'UTF-8'
+
+    group = 'com.insightfullogic'
 
     version = '0.1-SNAPSHOT'
 
