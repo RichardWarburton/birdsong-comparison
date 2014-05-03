@@ -5,7 +5,6 @@ import com.insightfullogic.birdsong.api.Song;
 import com.insightfullogic.birdsong.api.SongBook;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.Ignore;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
 
@@ -18,7 +17,6 @@ import static com.insightfullogic.birdsong.HttpAsserts.assertHttpOk;
 import static com.insightfullogic.birdsong.Users.*;
 import static org.junit.Assert.*;
 
-@Ignore
 public class SingingSpec {
 
     private static final String doReMi = "doe a deer a female deer";

@@ -1,7 +1,6 @@
 package com.insightfullogic.birdsong;
 
 import com.insightfullogic.birdsong.api.UserApi;
-import org.junit.Ignore;
 import org.junit.ClassRule;
 import org.junit.Test;
 
@@ -14,7 +13,6 @@ import static com.insightfullogic.birdsong.HttpAsserts.assertHttpOk;
 /**
  * .
  */
-@Ignore
 public class UserSpec {
 
     public static final String userToRegister = "b";
