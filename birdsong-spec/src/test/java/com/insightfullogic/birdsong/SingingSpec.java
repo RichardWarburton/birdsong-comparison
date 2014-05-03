@@ -1,9 +1,6 @@
 package com.insightfullogic.birdsong;
 
-import com.insightfullogic.birdsong.api.Api;
-import com.insightfullogic.birdsong.api.Song;
-import com.insightfullogic.birdsong.api.SongBook;
-import com.insightfullogic.birdsong.api.SongId;
+import com.insightfullogic.birdsong.api.*;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
@@ -60,6 +57,27 @@ public class SingingSpec {
         Instant timestamp = song.getTimestamp();
         assertTrue(before.compareTo(timestamp) <= 0);
         assertTrue(after.compareTo(song.getTimestamp()) >= 0);
+    }
+
+    @Test
+    public void listenOnlyReturnsResultsSinceDay() throws IOException {
+        SongBook songs;
+
+        Given:
+        bobsClient.users.follow(richard);
+
+        When:
+        richardsClient.singing.sing(doReMi);
+        Cursor cursor = bobsClient.singing.listen().getTo();
+        richardsClient.singing.sing(soundOfMusic);
+
+        Then:
+        songs = bobsClient.singing.listen(cursor);
+        assertEquals(1, songs.feed().size());
+
+        Song song = songs.feed().get(0);
+        assertEquals(richard, song.getSinger());
+        assertEquals(soundOfMusic, song.getSong());
     }
 
     @Test

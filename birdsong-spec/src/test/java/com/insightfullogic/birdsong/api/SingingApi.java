@@ -44,7 +44,7 @@ public class SingingApi {
     }
 
     public SongBook listen(final Cursor since) throws IOException {
-        final InputStream content = executor.execute(Request.Get(listenUrl))
+        final InputStream content = executor.execute(Request.Get(listenUrl + since))
                                             .returnContent()
                                             .asStream();
 

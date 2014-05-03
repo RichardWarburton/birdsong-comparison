@@ -20,6 +20,7 @@ public class SingingParser {
         JsonParser parser = SingingParser.factory.createParser(content);
 
         Cursor to = null;
+        Cursor from = null;
         List<Song> feed = null;
         List<Song> notifies = null;
         parser.nextToken(); // {

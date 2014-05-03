@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.time.Instant;
 import java.util.List;
 
 public class FeedGenerator {
@@ -12,16 +13,20 @@ public class FeedGenerator {
     private static final JsonFactory json = new JsonFactory();
 
     private final User user;
+    private final String to;
+    private final Instant since;
     private final JsonGenerator generator;
 
-    public FeedGenerator(User user, OutputStream out) throws IOException {
+    public FeedGenerator(User user, long since, OutputStream out) throws IOException {
         this.user = user;
+        to = String.valueOf(System.currentTimeMillis());
+        this.since = Instant.ofEpochMilli(since);
         generator = json.createGenerator(out);
     }
 
     public void generate() throws IOException {
         generator.writeStartObject();
-        generator.writeStringField("to", "1");
+        generator.writeStringField("to", to);
         generateFeed("feed", user.getFeed());
         generateFeed("notifies", user.getNotifications());
         generator.writeEndObject();
@@ -32,6 +37,10 @@ public class FeedGenerator {
     private void generateFeed(String name, List<Song> feed) throws IOException {
         generator.writeArrayFieldStart(name);
         for (Song song : feed) {
+            if (since.isAfter(song.getTimestamp())) {
+                continue;
+            }
+
             generator.writeStartObject();
             generator.writeStringField("id", "1");
             generator.writeStringField("singer", song.getSinger());

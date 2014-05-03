@@ -13,7 +13,9 @@ import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.lang.Long.parseLong;
 import static java.lang.System.currentTimeMillis;
+import static java.lang.System.load;
 import static spark.Spark.get;
 import static spark.Spark.post;
 
@@ -78,17 +80,21 @@ public class Birdsong {
             });
         })));
 
-        get(route("/listen/", ifAuthenticated((request, response) -> {
-            try (ServletOutputStream out = response.raw().getOutputStream()) {
-                final User user = getUser(request);
-                final FeedGenerator generator = new FeedGenerator(user, out);
-                generator.generate();
-                response.status(200);
-            } catch (IOException e) {
-                e.printStackTrace();
-                response.status(500);
-            }
+        get(route("/listen/:since", ifAuthenticated((request, response) -> {
+            String since = request.params("since");
+            listen(request, parseLong(since), response);
         })));
+    }
+
+    private void listen(Request request, long since, Response response) {
+        final User user = getUser(request);
+        try (ServletOutputStream out = response.raw().getOutputStream()) {
+            new FeedGenerator(user, since, out).generate();
+            response.status(200);
+        } catch (IOException e) {
+            e.printStackTrace();
+            response.status(500);
+        }
     }
 
     private Song sing(Request request, String lyrics, SongId of) {
