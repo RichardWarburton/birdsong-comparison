@@ -1,1 +1,1 @@
-include 'birdsong-api'
+include 'birdsong-spec', 'birdsong-spark'

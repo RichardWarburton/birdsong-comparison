@@ -1,6 +1,5 @@
 package com.insightfullogic.birdsong;
 
-import com.insightfullogic.birdsong.spark_in_memory.SparkApplicationRunner;
 import org.junit.rules.ExternalResource;
 
 /**
@@ -8,10 +7,13 @@ import org.junit.rules.ExternalResource;
  */
 public class ServiceRule extends ExternalResource {
 
-    private final BirdsongApplicationRunner service;
+    private static BirdsongApplicationRunner service;
+
+    public static void setService(BirdsongApplicationRunner service) {
+        ServiceRule.service = service;
+    }
 
     public ServiceRule() {
-        this.service = new SparkApplicationRunner();
     }
 
     protected void before() throws Throwable {
