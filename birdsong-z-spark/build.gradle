@@ -1,6 +1,6 @@
 
 dependencies {
     compile project(':birdsong-spec')
-    testCompile project(':birdsong-spec')
+    testCompile project(path: ':birdsong-spec', configuration: 'tests')
 }
 
