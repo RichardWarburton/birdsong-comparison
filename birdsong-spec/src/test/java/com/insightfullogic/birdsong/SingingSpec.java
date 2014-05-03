@@ -58,16 +58,26 @@ public class SingingSpec {
     }
 
     @Test
-    public void onlyFollowersCanHearSongs() throws IOException {
-        SongBook songs;
+    public void cantHearSongsIfNotFollowing() throws IOException {
+        When:
+        richardsClient.singing.sing(doReMi);
+
+        Then:
+        bobsClient.assertNoFeedOrNotificationEntries();
+    }
+
+    @Test
+    public void cantHearSongAfterUnfollow() throws IOException {
+        Given:
+        bobsClient.users.follow(richard);
+        bobsClient.users.unfollow(richard);
+
 
         When:
         richardsClient.singing.sing(doReMi);
 
         Then:
-        songs = bobsClient.singing.listen();
-        assertTrue(songs.feed().isEmpty());
-        assertTrue(songs.notifies().isEmpty());
+        bobsClient.assertNoFeedOrNotificationEntries();
     }
 
     @Test

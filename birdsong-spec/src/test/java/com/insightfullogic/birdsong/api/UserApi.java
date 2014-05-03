@@ -20,6 +20,7 @@ public class UserApi {
     private final String loginUrl;
     private final String registerUrl;
     private final String followUrl;
+    private final String unfollowUrl;
 
     private final CookieStore cookies;
     private final Executor executor;
@@ -29,6 +30,7 @@ public class UserApi {
         loginUrl = authPrefix + "login";
         registerUrl = authPrefix + "register";
         followUrl = authPrefix + "follow";
+        unfollowUrl = authPrefix + "unfollow";
 
         cookies = new BasicCookieStore();
         executor = Executor.newInstance().cookieStore(cookies);
@@ -51,7 +53,11 @@ public class UserApi {
     }
 
     public void follow(final String who) throws IOException {
-        final Request request = Request.Post(followUrl)
+        postUsernameTo(who, followUrl);
+    }
+
+    private void postUsernameTo(String who, String url) throws IOException {
+        final Request request = Request.Post(url)
                                        .bodyForm(Form.form()
                                                .add("username", who)
                                                .build());
@@ -74,6 +80,10 @@ public class UserApi {
 
     private void executeOk(Request request) throws IOException {
         assertHttpOk(executor.execute(request).returnResponse());
+    }
+
+    public void unfollow(String who) throws IOException {
+        postUsernameTo(who, unfollowUrl);
     }
 
 }

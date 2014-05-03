@@ -46,10 +46,16 @@ public class Birdsong {
         post(route("/user/register", withCredentials(this::registerCredentials)));
 
         post(route("/user/follow", ifAuthenticated((request, response) -> {
-            final QueryParamsMap params = request.queryMap();
-            final User toFollow = users.get(params.get(USERNAME).value());
+            final User toFollow = getUserParam(request);
             final User follower = getUser(request);
             toFollow.newFollower(follower);
+            response.status(200);
+        })));
+
+        post(route("/user/unfollow", ifAuthenticated((request, response) -> {
+            final User toFollow = getUserParam(request);
+            final User follower = getUser(request);
+            toFollow.unfollow(follower);
             response.status(200);
         })));
 
@@ -72,6 +78,11 @@ public class Birdsong {
                 response.status(500);
             }
         })));
+    }
+
+    private User getUserParam(Request request) {
+        final QueryParamsMap params = request.queryMap();
+        return users.get(params.get(USERNAME).value());
     }
 
     private void findMentions(Song song) {

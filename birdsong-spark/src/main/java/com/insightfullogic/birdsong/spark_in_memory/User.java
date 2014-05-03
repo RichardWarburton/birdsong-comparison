@@ -14,6 +14,7 @@ public class User {
     private final LinkedList<Song> notifications;
 
     private final Set<User> followers;
+
     public User(String username, String password) {
         Objects.requireNonNull(username);
         Objects.requireNonNull(password);
@@ -54,5 +55,9 @@ public class User {
 
     public List<Song> getNotifications() {
         return notifications;
+    }
+
+    public void unfollow(User user) {
+        followers.remove(user);
     }
 }

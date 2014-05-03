@@ -5,6 +5,7 @@ import org.junit.rules.ExternalResource;
 import java.io.IOException;
 
 import static com.insightfullogic.birdsong.HttpAsserts.assertHttpOk;
+import static org.junit.Assert.assertTrue;
 
 public class Api extends ExternalResource {
 
@@ -25,4 +26,11 @@ public class Api extends ExternalResource {
     protected void before() throws IOException {
         users.login(username, password);
     }
+
+    public void assertNoFeedOrNotificationEntries() throws IOException {
+        SongBook songs = singing.listen();
+        assertTrue(songs.feed().isEmpty());
+        assertTrue(songs.notifies().isEmpty());
+    }
+
 }
