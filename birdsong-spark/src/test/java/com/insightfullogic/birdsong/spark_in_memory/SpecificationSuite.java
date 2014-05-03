@@ -19,8 +19,12 @@ import com.insightfullogic.birdsong.ServiceRule;
 import com.insightfullogic.birdsong.SingingSpec;
 import com.insightfullogic.birdsong.UserSpec;
 import org.junit.BeforeClass;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-public class SingingTest extends SingingSpec {
+@RunWith(Suite.class)
+@Suite.SuiteClasses({UserSpec.class})
+public class SpecificationSuite {
     @BeforeClass
     public static void setup() {
         ServiceRule.setService(new SparkApplicationRunner());
