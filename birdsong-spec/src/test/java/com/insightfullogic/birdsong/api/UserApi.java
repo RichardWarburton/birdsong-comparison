@@ -9,6 +9,8 @@ import org.apache.http.impl.client.BasicCookieStore;
 
 import java.io.IOException;
 
+import static com.insightfullogic.birdsong.HttpAsserts.assertHttpOk;
+
 /**
  * .
  */
@@ -44,14 +46,13 @@ public class UserApi {
         return postCredentials(username, password, registerUrl);
     }
 
-    public HttpResponse follow(final String who) throws IOException {
+    public void follow(final String who) throws IOException {
         final Request request = Request.Post(followUrl)
                                        .bodyForm(Form.form()
                                                .add("username", who)
                                                .build());
 
-        return executor.execute(request)
-                       .returnResponse();
+        executeOk(request);
     }
 
     private HttpResponse postCredentials(final String username, final String password, final String url)
@@ -65,6 +66,10 @@ public class UserApi {
 
         return executor.execute(request)
                        .returnResponse();
+    }
+
+    private void executeOk(Request request) throws IOException {
+        assertHttpOk(executor.execute(request).returnResponse());
     }
 
 }

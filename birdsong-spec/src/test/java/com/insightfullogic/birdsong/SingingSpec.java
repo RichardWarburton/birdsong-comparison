@@ -37,7 +37,7 @@ public class SingingSpec {
         SongBook songs;
 
         Given:
-        assertHttpOk(bobsClient.users.follow(richard));
+        bobsClient.users.follow(richard);
 
         Instant before = Instant.now();
 

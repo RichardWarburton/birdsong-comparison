@@ -58,7 +58,7 @@ public class UserSpec {
         assertHttpOk(auth.login(Users.richard, Users.richardsPass));
 
         Then:
-        assertHttpOk(auth.follow(Users.bob));
+        auth.follow(Users.bob);
     }
 
     @Test
