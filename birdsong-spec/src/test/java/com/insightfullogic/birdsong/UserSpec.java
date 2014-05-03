@@ -50,7 +50,7 @@ public class UserSpec {
 
     @Test
     public void cantRegisterDuplicateUsernames() throws IOException {
-        Given:
+        When:
         auth.login(Users.richard, Users.richardsPass);
 
         Then:
@@ -59,7 +59,7 @@ public class UserSpec {
 
     @Test
     public void canFollowAnotherUser() throws IOException {
-        Given:
+        When:
         auth.login(Users.richard, Users.richardsPass);
 
         Then:
