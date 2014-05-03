@@ -7,6 +7,7 @@ import org.apache.http.client.fluent.Request;
 import java.io.IOException;
 import java.io.InputStream;
 
+import static com.insightfullogic.birdsong.HttpAsserts.assertHttpOk;
 import static org.apache.http.entity.ContentType.TEXT_PLAIN;
 
 public class SingingApi {
@@ -26,7 +27,11 @@ public class SingingApi {
         executor = auth.getExecutor();
     }
 
-    public HttpResponse sing(final String song) throws IOException {
+    public void sing(final String song) throws IOException {
+        assertHttpOk(trySing(song));
+    }
+
+    private HttpResponse trySing(String song) throws IOException {
         return postText(song, singUrl);
     }
 
@@ -39,7 +44,6 @@ public class SingingApi {
     }
 
     public SongBook listen(final Cursor since) throws IOException {
-        //  TODO: + since
         final InputStream content = executor.execute(Request.Get(listenUrl))
                                             .returnContent()
                                             .asStream();
@@ -49,8 +53,7 @@ public class SingingApi {
 
     private HttpResponse postText(final String song, final String url) throws IOException {
         return executor.execute(Request.Post(url).bodyString(song, TEXT_PLAIN))
-                .returnResponse();
+                       .returnResponse();
     }
-
 
 }

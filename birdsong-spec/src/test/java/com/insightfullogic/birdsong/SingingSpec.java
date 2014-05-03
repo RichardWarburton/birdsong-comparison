@@ -42,7 +42,7 @@ public class SingingSpec {
         Instant before = Instant.now();
 
         When:
-        assertHttpOk(richardsClient.singing.sing(doReMi));
+        richardsClient.singing.sing(doReMi);
         Instant after = Instant.now();
 
         Then:
@@ -62,7 +62,7 @@ public class SingingSpec {
         SongBook songs;
 
         When:
-        assertHttpOk(richardsClient.singing.sing(doReMi));
+        richardsClient.singing.sing(doReMi);
 
         Then:
         songs = bobsClient.singing.listen();
@@ -75,11 +75,11 @@ public class SingingSpec {
         List<Song> feed;
 
         Given:
-        assertHttpOk(bobsClient.users.follow(richard));
+        bobsClient.users.follow(richard);
 
         When:
-        assertHttpOk(richardsClient.singing.sing(doReMi));
-        assertHttpOk(richardsClient.singing.sing(soundOfMusic));
+        richardsClient.singing.sing(doReMi);
+        richardsClient.singing.sing(soundOfMusic);
 
         Then:
         feed = bobsClient.singing.listen().feed();

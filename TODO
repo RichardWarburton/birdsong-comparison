@@ -1,0 +1,17 @@
+
+add specs for:
+    unfollows
+    covers
+    since
+    search
+    a user information request
+    write some documentation
+
+Implement Birdsong in:
+    dropwizard
+    go
+    spring boot
+    play
+    scalatra
+    django
+
