@@ -1,6 +1,8 @@
-.gradle/
+
 .idea/
-birdsong.iml
+*.iml
+
 build/
 gradle/
-birdsong-comparison.iml
+.gradle/
+

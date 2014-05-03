@@ -26,6 +26,6 @@ public class SparkApplicationRunner implements BirdsongApplicationRunner {
 
     @Override
     public long getStartupPauseInMilliseconds() {
-        return 100;
+        return 50;
     }
 }
