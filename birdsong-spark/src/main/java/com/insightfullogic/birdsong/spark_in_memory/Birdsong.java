@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,9 +38,12 @@ public class Birdsong {
     }
 
     private final Map<String, User> users;
+    private final Map<SongId, User> originalUser;
 
     public Birdsong() {
         users = new HashMap<>();
+        originalUser = new HashMap<>();
+
         addUser(Users.richard, Users.richardsPass);
         addUser(Users.bob, Users.bobsPass);
 
@@ -61,17 +65,17 @@ public class Birdsong {
         })));
 
         post(route("/sing", ifAuthenticated((request, response) -> {
-            String lyrics = request.body();
-            if (lyrics.length() > MAX_LENGTH_OF_LYRICS) {
-                response.status(400);
-                return;
-            }
+            validateLyrics(request, response, lyrics -> {
+                sing(request, lyrics, null);
+            });
+        })));
 
-            final User user = getUser(request);
-            Song song = new Song(SongId.next(), user.getUsername(), lyrics, currentTimeMillis());
-            user.sing(song);
-            findMentions(song);
-            response.status(200);
+        post(route("/cover/:of", ifAuthenticated((request, response) -> {
+            validateLyrics(request, response, lyrics -> {
+                SongId of = new SongId(request.params("of"));
+                Song cover = sing(request, lyrics, of);
+                originalUser.get(of).pushNotification(cover);
+            });
         })));
 
         get(route("/listen/", ifAuthenticated((request, response) -> {
@@ -85,6 +89,26 @@ public class Birdsong {
                 response.status(500);
             }
         })));
+    }
+
+    private Song sing(Request request, String lyrics, SongId of) {
+        final User user = getUser(request);
+        SongId id = SongId.next();
+        Song song = new Song(id, user.getUsername(), lyrics, currentTimeMillis(), of);
+        user.sing(song);
+        findMentions(song);
+        originalUser.put(id, user);
+        return song;
+    }
+
+    private void validateLyrics(Request request, Response response, Consumer<String> handler) {
+        String lyrics = request.body();
+        if (lyrics.length() > MAX_LENGTH_OF_LYRICS) {
+            response.status(400);
+            return;
+        }
+
+        handler.accept(lyrics);
     }
 
     private User getUserParam(Request request) {

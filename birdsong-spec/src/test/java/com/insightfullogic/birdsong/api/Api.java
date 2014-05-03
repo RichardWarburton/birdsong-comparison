@@ -3,8 +3,11 @@ package com.insightfullogic.birdsong.api;
 import org.junit.rules.ExternalResource;
 
 import java.io.IOException;
+import java.util.List;
 
 import static com.insightfullogic.birdsong.HttpAsserts.assertHttpOk;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class Api extends ExternalResource {
@@ -31,6 +34,16 @@ public class Api extends ExternalResource {
         SongBook songs = singing.listen();
         assertTrue(songs.feed().isEmpty());
         assertTrue(songs.notifies().isEmpty());
+    }
+
+    public void notifiedOf(String user, String lyrics) throws IOException {
+        List<Song> notifies = singing.listen().notifies();
+        assertEquals(1,notifies.size());
+
+        Song song = notifies.get(0);
+        assertEquals(user, song.getSinger());
+        assertEquals(lyrics, song.getSong());
+        assertFalse(song.getCovers().isPresent());
     }
 
 }

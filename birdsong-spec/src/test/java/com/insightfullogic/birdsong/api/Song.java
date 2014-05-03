@@ -19,6 +19,10 @@ public class Song {
         this.timestamp = Instant.ofEpochMilli(timestamp);
     }
 
+    public SongId getId() {
+        return id;
+    }
+
     public String getSinger() {
         return singer;
     }

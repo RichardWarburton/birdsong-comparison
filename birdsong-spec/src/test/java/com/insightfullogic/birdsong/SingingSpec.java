@@ -3,6 +3,7 @@ package com.insightfullogic.birdsong;
 import com.insightfullogic.birdsong.api.Api;
 import com.insightfullogic.birdsong.api.Song;
 import com.insightfullogic.birdsong.api.SongBook;
+import com.insightfullogic.birdsong.api.SongId;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
@@ -103,19 +104,25 @@ public class SingingSpec {
 
     @Test
     public void mentionsNotifyMentionedUser() throws IOException {
-        List<Song> notifies;
-
         When:
         richardsClient.singing.sing(hiBob);
 
         Then:
-        notifies = bobsClient.singing.listen().notifies();
-        assertEquals(1,notifies.size());
+        bobsClient.notifiedOf(richard, hiBob);
+    }
 
-        Song song = notifies.get(0);
-        assertEquals(richard, song.getSinger());
-        assertEquals(hiBob, song.getSong());
-        assertFalse(song.getCovers().isPresent());
+    @Test
+    public void coverNotifiesOriginalUser() throws IOException {
+        Given:
+        richardsClient.users.follow(bob);
+        bobsClient.singing.sing(doReMi);
+        SongId id = richardsClient.singing.listen().feed().get(0).getId();
+
+        When:
+        richardsClient.singing.cover(doReMi, id);
+
+        Then:
+        bobsClient.notifiedOf(richard, doReMi);
     }
 
     @Test
