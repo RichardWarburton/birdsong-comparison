@@ -28,25 +28,26 @@ public class UserSpec {
 
     @Test
     public void canAuthenticate() throws IOException {
-        assertHttpOk(auth.login(Users.richard, Users.richardsPass));
+        auth.login(Users.richard, Users.richardsPass);
+        auth.login(Users.bob, Users.bobsPass);
     }
 
     @Test
     public void canRegisterNewUsernames() throws IOException {
         Given:
-        assertHttpForbidden(auth.login(userToRegister, passToRegister));
+        assertHttpForbidden(auth.tryLogin(userToRegister, passToRegister));
 
         When:
         assertHttpOk(auth.register(userToRegister, passToRegister));
 
         Then:
-        assertHttpOk(auth.login(userToRegister, passToRegister));
+        auth.login(userToRegister, passToRegister);
     }
 
     @Test
     public void cantRegisterDuplicateUsernames() throws IOException {
         Given:
-        assertHttpOk(auth.login(Users.richard, Users.richardsPass));
+        auth.login(Users.richard, Users.richardsPass);
 
         Then:
         assertHttpForbidden(auth.register(Users.richard, Users.richardsPass));
@@ -55,7 +56,7 @@ public class UserSpec {
     @Test
     public void canFollowAnotherUser() throws IOException {
         Given:
-        assertHttpOk(auth.login(Users.richard, Users.richardsPass));
+        auth.login(Users.richard, Users.richardsPass);
 
         Then:
         auth.follow(Users.bob);
@@ -63,7 +64,7 @@ public class UserSpec {
 
     @Test
     public void invalidCredentialsAreRejected() throws IOException {
-        assertHttpForbidden(auth.login(unknownUser, unknownPass));
+        assertHttpForbidden(auth.tryLogin(unknownUser, unknownPass));
     }
 
 }

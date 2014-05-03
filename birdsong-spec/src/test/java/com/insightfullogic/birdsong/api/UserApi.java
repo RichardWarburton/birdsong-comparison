@@ -38,7 +38,11 @@ public class UserApi {
         return executor;
     }
 
-    public HttpResponse login(final String username, final String password) throws IOException {
+    public void login(final String username, final String password) throws IOException {
+        assertHttpOk(tryLogin(username, password));
+    }
+
+    public HttpResponse tryLogin(String username, String password) throws IOException {
         return postCredentials(username, password, loginUrl);
     }
 

@@ -23,6 +23,6 @@ public class Api extends ExternalResource {
 
     @Override
     protected void before() throws IOException {
-        assertHttpOk(users.login(username, password));
+        users.login(username, password);
     }
 }
