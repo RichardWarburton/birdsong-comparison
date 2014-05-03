@@ -31,7 +31,7 @@ public class SingingApi {
         assertHttpOk(trySing(song));
     }
 
-    private HttpResponse trySing(String song) throws IOException {
+    public HttpResponse trySing(String song) throws IOException {
         return postText(song, singUrl);
     }
 

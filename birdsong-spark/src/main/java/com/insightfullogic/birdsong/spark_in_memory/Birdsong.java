@@ -28,6 +28,7 @@ public class Birdsong {
     public static final String AUTH_PASSWORD = "authenticatedPassword";
 
     private static final Pattern mentions = Pattern.compile("@([^ ]+)");
+    public static final int MAX_LENGTH_OF_LYRICS = 140;
 
     public static interface Handle extends BiConsumer<Request, Response> {}
 
@@ -60,8 +61,14 @@ public class Birdsong {
         })));
 
         post(route("/sing", ifAuthenticated((request, response) -> {
+            String lyrics = request.body();
+            if (lyrics.length() > MAX_LENGTH_OF_LYRICS) {
+                response.status(400);
+                return;
+            }
+
             final User user = getUser(request);
-            Song song = new Song(SongId.next(), user.getUsername(), request.body(), currentTimeMillis());
+            Song song = new Song(SongId.next(), user.getUsername(), lyrics, currentTimeMillis());
             user.sing(song);
             findMentions(song);
             response.status(200);

@@ -7,11 +7,15 @@ import static org.junit.Assert.assertEquals;
 public class HttpAsserts {
 
     public static void assertHttpOk(HttpResponse response) {
-        assertEquals(200, response.getStatusLine().getStatusCode());
+        assertResponseCodeIs(response, 200);
     }
 
     public static void assertHttpForbidden(HttpResponse response) {
-        assertEquals(403, response.getStatusLine().getStatusCode());
+        assertResponseCodeIs(response, 403);
+    }
+
+    public static void assertResponseCodeIs(HttpResponse response, int code) {
+        assertEquals(code, response.getStatusLine().getStatusCode());
     }
 
 }

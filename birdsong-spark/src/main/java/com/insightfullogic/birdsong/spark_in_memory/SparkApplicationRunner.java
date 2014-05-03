@@ -19,13 +19,12 @@ public class SparkApplicationRunner implements BirdsongApplicationRunner {
 
     @Override
     public synchronized void stop() throws Exception {
-        requireNonNull(application, "Application not started");
         BrokenApiWorkaround.stop();
         application = null;
     }
 
     @Override
     public long getStartupPauseInMilliseconds() {
-        return 200;
+        return 500;
     }
 }

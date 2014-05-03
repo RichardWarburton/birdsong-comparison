@@ -13,7 +13,7 @@ import java.time.Instant;
 import java.util.List;
 
 import static com.insightfullogic.birdsong.BirdsongApplicationRunner.address;
-import static com.insightfullogic.birdsong.HttpAsserts.assertHttpOk;
+import static com.insightfullogic.birdsong.HttpAsserts.assertResponseCodeIs;
 import static com.insightfullogic.birdsong.Users.*;
 import static org.junit.Assert.*;
 
@@ -21,6 +21,8 @@ public class SingingSpec {
 
     private static final String doReMi = "doe a deer a female deer";
     private static final String soundOfMusic = "The hills are alive with the sound of music...";
+    private static final String longSong = "utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, utz, ";
+
     public static final String hiBob = "Hi @" + bob;
 
     // Forall tests: Given we have two clients and they are logged in
@@ -53,8 +55,10 @@ public class SingingSpec {
         assertEquals(richard, song.getSinger());
         assertEquals(doReMi, song.getSong());
         assertFalse(song.getCovers().isPresent());
-        assertTrue(before.isBefore(song.getTimestamp()));
-        assertTrue(after.isAfter(song.getTimestamp()));
+
+        Instant timestamp = song.getTimestamp();
+        assertTrue(before.compareTo(timestamp) <= 0);
+        assertTrue(after.compareTo(song.getTimestamp()) >= 0);
     }
 
     @Test
@@ -112,6 +116,11 @@ public class SingingSpec {
         assertEquals(richard, song.getSinger());
         assertEquals(hiBob, song.getSong());
         assertFalse(song.getCovers().isPresent());
+    }
+
+    @Test
+    public void cantSingTooLong() throws IOException {
+        assertResponseCodeIs(richardsClient.singing.trySing(longSong), 400);
     }
 
 }
