@@ -54,14 +54,12 @@ public class Birdsong {
             final User toFollow = getUserParam(request);
             final User follower = getUser(request);
             toFollow.newFollower(follower);
-            response.status(200);
         })));
 
         post(route("/user/unfollow", ifAuthenticated((request, response) -> {
             final User toFollow = getUserParam(request);
             final User follower = getUser(request);
             toFollow.unfollow(follower);
-            response.status(200);
         })));
 
         post(route("/sing", ifAuthenticated((request, response) -> {
@@ -105,7 +103,6 @@ public class Birdsong {
         final User user = getUser(request);
         try (ServletOutputStream out = response.raw().getOutputStream()) {
             new FeedGenerator(user, since, out).generate();
-            response.status(200);
         } catch (IOException e) {
             e.printStackTrace();
             response.status(500);
