@@ -1,5 +1,6 @@
 package com.insightfullogic.birdsong.api;
 
+import com.insightfullogic.birdsong.Users;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.fluent.Executor;
@@ -8,8 +9,12 @@ import org.apache.http.client.fluent.Request;
 import org.apache.http.impl.client.BasicCookieStore;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.function.Function;
 
 import static com.insightfullogic.birdsong.HttpAsserts.assertHttpOk;
+import static org.junit.Assert.assertEquals;
 
 /**
  * .
@@ -21,6 +26,7 @@ public class UserApi {
     private final String registerUrl;
     private final String followUrl;
     private final String unfollowUrl;
+    private final String informationUrl;
 
     private final CookieStore cookies;
     private final Executor executor;
@@ -31,6 +37,7 @@ public class UserApi {
         registerUrl = authPrefix + "register";
         followUrl = authPrefix + "follow";
         unfollowUrl = authPrefix + "unfollow";
+        informationUrl = authPrefix + "information/";
 
         cookies = new BasicCookieStore();
         executor = Executor.newInstance().cookieStore(cookies);
@@ -84,6 +91,29 @@ public class UserApi {
 
     public void unfollow(String who) throws IOException {
         postUsernameTo(who, unfollowUrl);
+    }
+
+    public Information information(String about) throws IOException {
+        System.out.println(informationUrl + about);
+        InputStream data = executor.execute(Request.Get(informationUrl + about))
+                                   .returnContent()
+                                   .asStream();
+
+        return Information.parse(data);
+    }
+
+    public void assertFollows(String about, String other) throws IOException {
+        assertUserRelationship(about, other, Information::getFollowers);
+    }
+
+    public void assertFollowing(String about, String other) throws IOException {
+        assertUserRelationship(about, other, Information::getFollowing);
+    }
+
+    private void assertUserRelationship(String about, String other, Function<Information, List<String>> func) throws IOException {
+        List<String> following = func.apply(information(about));
+        assertEquals(1, following.size());
+        assertEquals(other, following.get(0));
     }
 
 }

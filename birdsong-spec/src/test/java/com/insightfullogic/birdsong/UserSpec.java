@@ -1,15 +1,20 @@
 package com.insightfullogic.birdsong;
 
+import com.insightfullogic.birdsong.api.Information;
 import com.insightfullogic.birdsong.api.UserApi;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.List;
 
 import static com.insightfullogic.birdsong.BirdsongApplicationRunner.address;
 import static com.insightfullogic.birdsong.HttpAsserts.assertHttpForbidden;
 import static com.insightfullogic.birdsong.HttpAsserts.assertHttpOk;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * .
@@ -28,47 +33,49 @@ public class UserSpec {
     @Rule
     public ResetRule reset = new ResetRule();
 
-    private final UserApi auth = new UserApi(address);
+    private final UserApi richard = new UserApi(address);
 
     @Test
     public void canAuthenticate() throws IOException {
-        auth.login(Users.richard, Users.richardsPass);
-        auth.login(Users.bob, Users.bobsPass);
+        richard.login(Users.richard, Users.richardsPass);
+        richard.login(Users.bob, Users.bobsPass);
     }
 
     @Test
     public void canRegisterNewUsernames() throws IOException {
         Given:
-        assertHttpForbidden(auth.tryLogin(userToRegister, passToRegister));
+        assertHttpForbidden(richard.tryLogin(userToRegister, passToRegister));
 
         When:
-        assertHttpOk(auth.register(userToRegister, passToRegister));
+        assertHttpOk(richard.register(userToRegister, passToRegister));
 
         Then:
-        auth.login(userToRegister, passToRegister);
+        richard.login(userToRegister, passToRegister);
     }
 
     @Test
     public void cantRegisterDuplicateUsernames() throws IOException {
         When:
-        auth.login(Users.richard, Users.richardsPass);
+        richard.login(Users.richard, Users.richardsPass);
 
         Then:
-        assertHttpForbidden(auth.register(Users.richard, Users.richardsPass));
+        assertHttpForbidden(richard.register(Users.richard, Users.richardsPass));
     }
 
     @Test
     public void canFollowAnotherUser() throws IOException {
         When:
-        auth.login(Users.richard, Users.richardsPass);
+        richard.login(Users.richard, Users.richardsPass);
 
         Then:
-        auth.follow(Users.bob);
+        richard.follow(Users.bob);
+        richard.assertFollowing(Users.richard, Users.bob);
+        richard.assertFollows(Users.bob, Users.richard);
     }
 
     @Test
     public void invalidCredentialsAreRejected() throws IOException {
-        assertHttpForbidden(auth.tryLogin(unknownUser, unknownPass));
+        assertHttpForbidden(richard.tryLogin(unknownUser, unknownPass));
     }
 
 }

@@ -14,6 +14,7 @@ public class User {
     private final LinkedList<Song> notifications;
 
     private final Set<User> followers;
+    private final Set<User> following;
 
     public User(String username, String password) {
         Objects.requireNonNull(username);
@@ -21,6 +22,7 @@ public class User {
         this.username = username;
         this.password = password;
         followers = new HashSet<>();
+        following = new HashSet<>();
         feed = new LinkedList<>();
         notifications = new LinkedList<>();
     }
@@ -31,6 +33,7 @@ public class User {
 
     public void newFollower(User user) {
         followers.add(user);
+        user.following.add(this);
     }
 
     public void pushFeed(Song song) {
@@ -59,5 +62,13 @@ public class User {
 
     public void unfollow(User user) {
         followers.remove(user);
+    }
+
+    public Set<User> getFollowers() {
+        return followers;
+    }
+
+    public Set<User> getFollowing() {
+        return following;
     }
 }

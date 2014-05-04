@@ -82,6 +82,15 @@ public class Birdsong {
             String since = request.params("since");
             listen(request, parseLong(since), response);
         })));
+
+        get(route("/user/information/:about", (request, response) -> {
+            User about = users.get(request.params("about"));
+            try (ServletOutputStream out = response.raw().getOutputStream()) {
+                new InformationGenerator(about, out).generate();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }));
     }
 
     public void reset() {
