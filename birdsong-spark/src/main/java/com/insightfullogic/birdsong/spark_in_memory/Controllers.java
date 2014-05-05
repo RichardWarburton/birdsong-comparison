@@ -36,12 +36,9 @@ import static spark.Spark.get;
 import static spark.Spark.post;
 
 /**
- * .Spark framework specific controllers.
+ * .Controllers for http requests. Any spark framework specific code should be located here.
  */
 public class Controllers {
-
-    private static final Pattern mentions = Pattern.compile("@([^ ]+)");
-    private static final int MAX_LENGTH_OF_LYRICS = 140;
 
     public static final String USERNAME = "username";
     public static final String PASSWORD = "password";
@@ -50,11 +47,11 @@ public class Controllers {
     public static final String AUTH_PASSWORD = "authenticatedPassword";
 
     private final UserService users;
-    private final Map<SongId, User> originalUser;
+    private final SongService songs;
 
-    public Controllers(UserService users) {
+    public Controllers(UserService users, SongService songs) {
         this.users = users;
-        originalUser = new HashMap<>();
+        this.songs = songs;
 
         post(route("/user/login", withCredentials(users::areValidCredentials)));
         post(route("/user/register", withCredentials(users::registerCredentials)));
@@ -72,26 +69,32 @@ public class Controllers {
         })));
 
         post(route("/sing", ifAuthenticated((request, response) -> {
-            validateLyrics(request, response, lyrics -> {
-                sing(request, lyrics, null);
+            songs.validateLyrics(request, response, lyrics -> {
+                final User user = getUser(request);
+                songs.sing(user, lyrics, null);
             });
         })));
 
         post(route("/cover/:of", ifAuthenticated((request, response) -> {
-            validateLyrics(request, response, lyrics -> {
+            songs.validateLyrics(request, response, lyrics -> {
+                final User user = getUser(request);
                 SongId of = new SongId(request.params("of"));
-                Song cover = sing(request, lyrics, of);
-                originalUser.get(of).pushNotification(cover);
+                songs.sing(user, lyrics, of);
             });
         })));
 
         get(route("/listen/:since", ifAuthenticated((request, response) -> {
             String since = request.params("since");
-            listen(request, parseLong(since), response);
+            try (ServletOutputStream out = response.raw().getOutputStream()) {
+                new JsonFeed(getUser(request), parseLong(since), out).generate();
+            } catch (IOException e) {
+                e.printStackTrace();
+                response.status(500);
+            }
         })));
 
         get(route("/user/information/:about", (request, response) -> {
-            User about = users.get(request.params("about"));
+            User about = users.lookupByName(request.params("about"));
             try (ServletOutputStream out = response.raw().getOutputStream()) {
                 new JsonInformation(about, out).generate();
             } catch (IOException e) {
@@ -100,45 +103,7 @@ public class Controllers {
         }));
     }
 
-    private void listen(Request request, long since, Response response) {
-        final User user = getUser(request);
-        try (ServletOutputStream out = response.raw().getOutputStream()) {
-            new JsonFeed(user, since, out).generate();
-        } catch (IOException e) {
-            e.printStackTrace();
-            response.status(500);
-        }
-    }
-
-    private Song sing(Request request, String lyrics, SongId of) {
-        final User user = getUser(request);
-        SongId id = SongId.next();
-        Song song = new Song(id, user.getUsername(), lyrics, currentTimeMillis(), of);
-        user.sing(song);
-        findMentions(song);
-        originalUser.put(id, user);
-        return song;
-    }
-
-    private void validateLyrics(Request request, Response response, Consumer<String> handler) {
-        String lyrics = request.body();
-        if (lyrics.length() > MAX_LENGTH_OF_LYRICS) {
-            response.status(400);
-            return;
-        }
-
-        handler.accept(lyrics);
-    }
-
-    private void findMentions(Song song) {
-        final String lyrics = song.getLyrics();
-        final Matcher matcher = mentions.matcher(lyrics);
-        while (matcher.find()) {
-            final String name = matcher.group(1);
-            users.get(name).pushNotification(song);
-        }
-    }
-
+    // TODO: refactor this to be a filter
     private Handle ifAuthenticated(Handle function) {
         return (request, response) -> {
             if (users.areValidCredentials(request.cookie(AUTH_USERNAME), request.cookie(AUTH_PASSWORD))) {
@@ -167,10 +132,6 @@ public class Controllers {
         response.cookie("/", key, value, 1, false);
     }
 
-    public void clear() {
-        originalUser.clear();
-    }
-
     public static interface Handle extends BiConsumer<Request, Response> {}
 
     private static Route route(String url, Handle handle) {
@@ -182,14 +143,13 @@ public class Controllers {
         };
     }
 
-
     private User getUserParam(Request request) {
         final QueryParamsMap params = request.queryMap();
-        return users.get(params.get(USERNAME).value());
+        return users.lookupByName(params.get(USERNAME).value());
     }
 
     private User getUser(Request request) {
-        return users.get(request.cookie(AUTH_USERNAME));
+        return users.lookupByName(request.cookie(AUTH_USERNAME));
     }
 
 }

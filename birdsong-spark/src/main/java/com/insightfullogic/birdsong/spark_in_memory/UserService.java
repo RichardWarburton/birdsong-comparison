@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * .
+ * Service that manages storage and lookup of users.
  */
 public class UserService {
 
@@ -29,12 +29,12 @@ public class UserService {
         users = new HashMap<>();
     }
 
-    public void clear() {
-        users.clear();
-    }
-
     public void addUser(String username, String password) {
         users.put(username, new User(username, password));
+    }
+
+    public User lookupByName(String username) {
+        return users.get(username);
     }
 
     public boolean registerCredentials(String username, String password) {
@@ -51,9 +51,8 @@ public class UserService {
         return user != null && user.hasPassword(password);
     }
 
-
-    public User get(String username) {
-        return users.get(username);
+    public void clear() {
+        users.clear();
     }
 
 }
