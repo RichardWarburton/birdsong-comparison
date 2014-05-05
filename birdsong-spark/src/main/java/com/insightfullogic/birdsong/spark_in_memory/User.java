@@ -10,9 +10,7 @@ public class User {
     private final String username;
     private final String password;
     private final LinkedList<Song> feed;
-
     private final LinkedList<Song> notifications;
-
     private final Set<User> followers;
     private final Set<User> following;
 

@@ -2,6 +2,8 @@
 dependencies {
     compile project(':birdsong-spec')
     compile("org.springframework.boot:spring-boot-starter-web:1.0.2.RELEASE")
+    compile("org.springframework.boot:spring-boot-starter-data-jpa:1.0.2.RELEASE")
+    compile 'com.h2database:h2:1.4.178'
     testCompile project(path: ':birdsong-spec', configuration: 'tests')
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }

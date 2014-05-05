@@ -9,6 +9,7 @@ import java.util.Optional;
 public class Song {
 
     private final SongId id;
+
     private final String singer;
     private final String song;
     private final Instant timestamp;
@@ -20,6 +21,10 @@ public class Song {
         this.id = id;
         this.covers = covers;
         this.timestamp = Instant.ofEpochMilli(timestamp);
+    }
+
+    public SongId getId() {
+        return id;
     }
 
     public String getSinger() {

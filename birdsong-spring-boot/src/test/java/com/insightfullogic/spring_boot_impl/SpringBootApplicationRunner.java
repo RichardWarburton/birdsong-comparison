@@ -14,6 +14,12 @@ public class SpringBootApplicationRunner implements BirdsongApplicationRunner {
     @Override
     public void start() throws Exception {
         context = SpringApplication.run(Birdsong.class);
+        addUsers();
+    }
+
+    private void addUsers() {
+        UserRepository repo = context.getBean(UserRepository.class);
+        repo.addInitialData();
     }
 
     @Override
