@@ -29,14 +29,14 @@ import static java.util.stream.Collectors.toList;
 /**
  * .
  */
-public class InformationGenerator {
+public class JsonInformation {
 
     private static final ObjectMapper json = new ObjectMapper();
 
     private final User user;
     private final OutputStream out;
 
-    public InformationGenerator(User user, OutputStream out) throws IOException {
+    public JsonInformation(User user, OutputStream out) throws IOException {
         this.user = user;
         this.out = out;
     }

@@ -8,7 +8,7 @@ import java.io.OutputStream;
 import java.time.Instant;
 import java.util.List;
 
-public class FeedGenerator {
+public class JsonFeed {
 
     private static final JsonFactory json = new JsonFactory();
 
@@ -17,7 +17,7 @@ public class FeedGenerator {
     private final Instant since;
     private final JsonGenerator generator;
 
-    public FeedGenerator(User user, long since, OutputStream out) throws IOException {
+    public JsonFeed(User user, long since, OutputStream out) throws IOException {
         this.user = user;
         to = String.valueOf(System.currentTimeMillis());
         this.since = Instant.ofEpochMilli(since);

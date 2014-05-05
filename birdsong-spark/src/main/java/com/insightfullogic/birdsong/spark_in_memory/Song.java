@@ -3,6 +3,9 @@ package com.insightfullogic.birdsong.spark_in_memory;
 import java.time.Instant;
 import java.util.Optional;
 
+/**
+ * Model for a song
+ */
 public class Song {
 
     private final SongId id;
