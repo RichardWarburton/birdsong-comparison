@@ -1,4 +1,7 @@
 
+add whoami and tests
+fix security
+make api more restful (eg register user)
 write some documentation
 
 Implement Birdsong in:

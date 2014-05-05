@@ -10,6 +10,7 @@ import java.io.IOException;
 import static com.insightfullogic.birdsong.BirdsongApplicationRunner.address;
 import static com.insightfullogic.birdsong.HttpAsserts.assertHttpForbidden;
 import static com.insightfullogic.birdsong.HttpAsserts.assertHttpOk;
+import static com.insightfullogic.birdsong.HttpAsserts.assertResponseCodeIs;
 
 /**
  * .
@@ -54,7 +55,7 @@ public class UserSpec {
         richard.login(Users.richard, Users.richardsPass);
 
         Then:
-        assertHttpForbidden(richard.register(Users.richard, Users.richardsPass));
+        assertResponseCodeIs(richard.register(Users.richard, Users.richardsPass), 400);
     }
 
     @Test

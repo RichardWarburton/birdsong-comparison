@@ -14,4 +14,8 @@ public class ForbiddenException extends IllegalStateException {
     public ForbiddenException(Throwable e) {
         super(e);
     }
+
+    public ForbiddenException() {
+
+    }
 }
