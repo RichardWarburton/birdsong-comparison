@@ -15,7 +15,6 @@
  */
 package com.insightfullogic.birdsong.api;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;

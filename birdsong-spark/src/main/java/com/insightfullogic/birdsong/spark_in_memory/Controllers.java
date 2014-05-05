@@ -22,16 +22,10 @@ import spark.Route;
 
 import javax.servlet.ServletOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static java.lang.Long.parseLong;
-import static java.lang.System.currentTimeMillis;
 import static spark.Spark.get;
 import static spark.Spark.post;
 

@@ -2,8 +2,6 @@ package com.insightfullogic.birdsong.spark_in_memory;
 
 import com.insightfullogic.birdsong.Users;
 
-import static java.lang.Long.parseLong;
-
 /**
  * Trivial, Dumb, In-memory, Ill factored implementation
  */

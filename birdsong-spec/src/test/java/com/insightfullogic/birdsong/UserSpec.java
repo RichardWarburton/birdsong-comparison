@@ -1,20 +1,15 @@
 package com.insightfullogic.birdsong;
 
-import com.insightfullogic.birdsong.api.Information;
 import com.insightfullogic.birdsong.api.UserApi;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.List;
 
 import static com.insightfullogic.birdsong.BirdsongApplicationRunner.address;
 import static com.insightfullogic.birdsong.HttpAsserts.assertHttpForbidden;
 import static com.insightfullogic.birdsong.HttpAsserts.assertHttpOk;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 /**
  * .

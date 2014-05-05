@@ -3,8 +3,6 @@ package com.insightfullogic.birdsong.spark_in_memory;
 import com.insightfullogic.birdsong.BirdsongApplicationRunner;
 import spark.BrokenApiWorkaround;
 
-import static java.util.Objects.requireNonNull;
-
 public class SparkApplicationRunner implements BirdsongApplicationRunner {
 
     private Birdsong application = null;

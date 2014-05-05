@@ -1,6 +1,5 @@
 package com.insightfullogic.birdsong.api;
 
-import com.insightfullogic.birdsong.Users;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.fluent.Executor;
