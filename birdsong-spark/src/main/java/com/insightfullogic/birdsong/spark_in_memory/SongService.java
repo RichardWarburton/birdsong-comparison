@@ -20,6 +20,7 @@ import spark.Response;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -42,14 +43,8 @@ public class SongService {
         originalPublisher = new HashMap<>();
     }
 
-    public void validateLyrics(Request request, Response response, Consumer<String> handler) {
-        String lyrics = request.body();
-        if (lyrics.length() > MAX_LENGTH_OF_LYRICS) {
-            response.status(400);
-            return;
-        }
-
-        handler.accept(lyrics);
+    public boolean validateLyrics(String lyrics) {
+        return lyrics.length() > MAX_LENGTH_OF_LYRICS;
     }
 
     public void findMentions(Song song) {
@@ -61,16 +56,21 @@ public class SongService {
         }
     }
 
-    public void sing(User user, String lyrics, SongId coverOf) {
+    public boolean sing(User user, String lyrics, String coverOf) {
+        if (validateLyrics(lyrics)) {
+            return false;
+        }
         SongId id = SongId.next();
-        Song song = new Song(id, user.getUsername(), lyrics, currentTimeMillis(), coverOf);
+        Optional<SongId> coverId = Optional.ofNullable(coverOf).map(SongId::new);
+        Song song = new Song(id, user.getUsername(), lyrics, currentTimeMillis(), coverId);
         user.sing(song);
         findMentions(song);
         originalPublisher.put(id, user);
 
-        if (coverOf != null) {
-            originalPublisher.get(coverOf).pushNotification(song);
+        if (coverId.isPresent()) {
+            originalPublisher.get(coverId.get()).pushNotification(song);
         }
+        return true;
     }
 
     public void clear() {

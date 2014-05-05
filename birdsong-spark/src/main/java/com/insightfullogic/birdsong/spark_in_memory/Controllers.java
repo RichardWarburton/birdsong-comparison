@@ -24,6 +24,7 @@ import javax.servlet.ServletOutputStream;
 import java.io.IOException;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 
 import static java.lang.Long.parseLong;
 import static spark.Spark.get;
@@ -62,28 +63,14 @@ public class Controllers {
             toFollow.unfollow(follower);
         })));
 
-        post(route("/sing", ifAuthenticated((request, response) -> {
-            songs.validateLyrics(request, response, lyrics -> {
-                final User user = getUser(request);
-                songs.sing(user, lyrics, null);
-            });
-        })));
+        post(route("/sing", sing()));
 
-        post(route("/cover/:of", ifAuthenticated((request, response) -> {
-            songs.validateLyrics(request, response, lyrics -> {
-                final User user = getUser(request);
-                SongId of = new SongId(request.params("of"));
-                songs.sing(user, lyrics, of);
-            });
-        })));
+        post(route("/cover/:of", sing()));
 
         get(route("/listen/:since", ifAuthenticated((request, response) -> {
-            String since = request.params("since");
+            long since = parseLong(request.params("since"));
             try (ServletOutputStream out = response.raw().getOutputStream()) {
-                new JsonFeed(getUser(request), parseLong(since), out).generate();
-            } catch (IOException e) {
-                e.printStackTrace();
-                response.status(500);
+                new JsonFeed(getUser(request), since, out).generate();
             }
         })));
 
@@ -91,10 +78,17 @@ public class Controllers {
             User about = users.lookupByName(request.params("about"));
             try (ServletOutputStream out = response.raw().getOutputStream()) {
                 new JsonInformation(about, out).generate();
-            } catch (IOException e) {
-                e.printStackTrace();
             }
         }));
+    }
+
+    private Handle sing() {
+        return ifAuthenticated((request, response) -> {
+            final User user = getUser(request);
+            if (!songs.sing(user, request.body(), request.params("of"))) {
+                response.status(400);
+            }
+        });
     }
 
     // TODO: refactor this to be a filter
@@ -126,12 +120,19 @@ public class Controllers {
         response.cookie("/", key, value, 1, false);
     }
 
-    public static interface Handle extends BiConsumer<Request, Response> {}
+    public static interface Handle {
+        public void accept(Request request, Response response) throws Exception;
+    }
 
     private static Route route(String url, Handle handle) {
         return new Route(url) {
             public Object handle(Request request, Response response) {
-                handle.accept(request, response);
+                try {
+                    handle.accept(request, response);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    response.status(500);
+                }
                 return "";
             }
         };

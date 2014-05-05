@@ -14,15 +14,11 @@ public class Song {
     private final Instant timestamp;
     private final Optional<SongId> covers;
 
-    public Song(final SongId id, final String singer, final String song, final long timestamp) {
-        this(id, singer, song, timestamp, null);
-    }
-
-    public Song(final SongId id, final String singer, final String song, final long timestamp, final SongId covers) {
+    public Song(final SongId id, final String singer, final String song, final long timestamp, final Optional<SongId> covers) {
         this.singer = singer;
         this.song = song;
         this.id = id;
-        this.covers = Optional.ofNullable(covers);
+        this.covers = covers;
         this.timestamp = Instant.ofEpochMilli(timestamp);
     }
 
