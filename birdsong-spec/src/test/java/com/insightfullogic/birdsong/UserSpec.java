@@ -8,9 +8,7 @@ import org.junit.Test;
 import java.io.IOException;
 
 import static com.insightfullogic.birdsong.BirdsongApplicationRunner.address;
-import static com.insightfullogic.birdsong.HttpAsserts.assertHttpForbidden;
-import static com.insightfullogic.birdsong.HttpAsserts.assertHttpOk;
-import static com.insightfullogic.birdsong.HttpAsserts.assertResponseCodeIs;
+import static com.insightfullogic.birdsong.HttpAsserts.*;
 
 /**
  * .

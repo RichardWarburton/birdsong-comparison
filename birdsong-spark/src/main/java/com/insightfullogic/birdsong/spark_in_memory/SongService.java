@@ -15,13 +15,9 @@
  */
 package com.insightfullogic.birdsong.spark_in_memory;
 
-import spark.Request;
-import spark.Response;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

@@ -1,14 +1,16 @@
 package com.insightfullogic.spring_boot_impl;
 
+import com.google.common.collect.ImmutableMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,7 +42,7 @@ public class UserController {
     public String login(@RequestParam("username") String username,
                         @RequestParam("password") String password,
                         HttpServletResponse response) {
-        repo.lookupByNameAndPassword(username, password);
+        repo.checkUsersPassword(username, password);
         response.addCookie(new Cookie(USER, username));
         response.addCookie(new Cookie(PASS, password));
         return OK;
@@ -56,7 +58,8 @@ public class UserController {
 
     @RequestMapping(value = "follow", method = POST)
     @ResponseBody
-    public String follow(@RequestParam("username") String toFollow, HttpServletRequest request) {
+    public String follow(@RequestParam("username") String toFollow,
+                         HttpServletRequest request) {
         String user = (String) request.getAttribute("user");
         repo.follow(user, toFollow);
         return OK;
@@ -66,13 +69,8 @@ public class UserController {
     @ResponseBody
     public Map<String, ?> information(@PathVariable("name") String name) {
         User user = repo.lookupByName(name);
-        List<String> following = toNames(user.getFollowing());
-        List<String> followers = toNames(user.getFollowers());
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("following", following);
-        response.put("followers", followers);
-        return response;
+        return ImmutableMap.of("following", toNames(user.getFollowing()),
+                               "followers", toNames(user.getFollowers()));
     }
 
     private List<String> toNames(Set<User> users) {

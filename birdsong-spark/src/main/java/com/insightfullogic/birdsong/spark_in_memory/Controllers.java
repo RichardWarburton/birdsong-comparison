@@ -21,10 +21,7 @@ import spark.Response;
 import spark.Route;
 
 import javax.servlet.ServletOutputStream;
-import java.io.IOException;
-import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
 
 import static java.lang.Long.parseLong;
 import static spark.Spark.get;
@@ -94,7 +91,8 @@ public class Controllers {
     // TODO: refactor this to be a filter
     private Handle ifAuthenticated(Handle function) {
         return (request, response) -> {
-            if (users.areValidCredentials(request.cookie(AUTH_USERNAME), request.cookie(AUTH_PASSWORD))) {
+            int ok = users.areValidCredentials(request.cookie(AUTH_USERNAME), request.cookie(AUTH_PASSWORD));
+            if (ok == 200) {
                 function.accept(request, response);
             } else {
                 response.status(403);
@@ -102,17 +100,17 @@ public class Controllers {
         };
     }
 
-    private Handle withCredentials(BiFunction<String, String, Boolean> function) {
+    private Handle withCredentials(BiFunction<String, String, Integer> function) {
         return (request, response) -> {
             final QueryParamsMap params = request.queryMap();
             String username = params.get(USERNAME).value();
             String password = params.get(PASSWORD).value();
-            final boolean ok = function.apply(username, password);
-            if (ok) {
+            final int statusCode = function.apply(username, password);
+            if (statusCode == 200) {
                 setCookie(response, username, AUTH_USERNAME);
                 setCookie(response, password, AUTH_PASSWORD);
             }
-            response.status(ok ? 200 : 403);
+            response.status(statusCode);
         };
     }
 

@@ -1,9 +1,7 @@
 package com.insightfullogic.spring_boot_impl;
 
 import com.insightfullogic.birdsong.ServiceRule;
-import com.insightfullogic.birdsong.SingingSpec;
 import com.insightfullogic.birdsong.UserSpec;
-import com.insightfullogic.spring_boot_impl.SpringBootApplicationRunner;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

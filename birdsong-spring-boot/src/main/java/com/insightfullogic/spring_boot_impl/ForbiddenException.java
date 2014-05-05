@@ -2,8 +2,6 @@ package com.insightfullogic.spring_boot_impl;
 
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import javax.persistence.NoResultException;
-
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 
 /**

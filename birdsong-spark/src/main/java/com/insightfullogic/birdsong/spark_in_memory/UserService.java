@@ -37,18 +37,19 @@ public class UserService {
         return users.get(username);
     }
 
-    public boolean registerCredentials(String username, String password) {
+    public int registerCredentials(String username, String password) {
         if (users.containsKey(username)) {
-            return false;
+            return 400;
         }
 
         addUser(username, password);
-        return true;
+        return 200;
     }
 
-    public boolean areValidCredentials(String username, String password) {
+    public int areValidCredentials(String username, String password) {
         User user = users.get(username);
-        return user != null && user.hasPassword(password);
+        boolean ok = user != null && user.hasPassword(password);
+        return ok ? 200 : 403;
     }
 
     public void clear() {

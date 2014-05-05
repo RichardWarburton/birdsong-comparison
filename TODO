@@ -4,6 +4,9 @@ fix security
 make api more restful (eg register user)
 write some documentation
 
+spring-boot:
+    finish
+
 Implement Birdsong in:
     dropwizard
     go

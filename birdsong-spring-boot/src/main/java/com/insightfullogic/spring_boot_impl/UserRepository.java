@@ -1,6 +1,5 @@
 package com.insightfullogic.spring_boot_impl;
 
-import com.insightfullogic.birdsong.Users;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -9,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
+import java.util.stream.Stream;
 
 /**
  * .
@@ -24,19 +24,14 @@ public class UserRepository {
     }
 
     @Transactional
-    public void addInitialData() {
-        entities.persist(new User(Users.richard, Users.richardsPass));
-        entities.persist(new User(Users.bob, Users.bobsPass));
+    public void addUsers(User... users) {
+        Stream.of(users).forEach(entities::persist);
     }
 
-    public User lookupByNameAndPassword(String name, String password) throws ForbiddenException {
-        try {
-            return entities.createQuery("SELECT user FROM User user WHERE user.name = :name AND user.password = :password", User.class)
-                           .setParameter("name", name)
-                           .setParameter("password", password)
-                           .getSingleResult();
-        } catch (NoResultException e) {
-            throw new ForbiddenException(e);
+    public void checkUsersPassword(String name, String password) throws ForbiddenException {
+        User user = lookupByName(name);
+        if (!password.equals(user.getPassword())) {
+            throw new ForbiddenException();
         }
     }
 
@@ -58,8 +53,6 @@ public class UserRepository {
         User user = lookupByName(username);
         User toFollow = lookupByName(toFollowUsername);
         user.getFollowing().add(toFollow);
-        entities.persist(user);
-        entities.persist(toFollow);
     }
 
     public User lookupByName(String user) {

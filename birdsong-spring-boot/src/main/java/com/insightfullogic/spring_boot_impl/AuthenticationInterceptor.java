@@ -30,7 +30,7 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
             throw new ForbiddenException();
         }
         String user = userCookie.getValue();
-        repo.lookupByNameAndPassword(user, passCookie.getValue());
+        repo.checkUsersPassword(user, passCookie.getValue());
         request.setAttribute("user", user);
         return true;
     }
