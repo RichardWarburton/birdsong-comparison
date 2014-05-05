@@ -9,13 +9,12 @@ import static java.lang.Long.parseLong;
  */
 public class Birdsong {
 
-    private final SongService songs;
-
     public static void main(String[] args) {
         new Birdsong();
     }
 
     private final UserService users;
+    private final SongService songs;
     private final Controllers controllers;
 
     public Birdsong() {
