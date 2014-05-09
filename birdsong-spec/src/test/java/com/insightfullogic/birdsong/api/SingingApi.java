@@ -19,8 +19,10 @@ public class SingingApi {
     private final String listenUrl;
 
     private final Executor executor;
+    private final UserApi auth;
 
     public SingingApi(final String prefix, final UserApi auth) {
+        this.auth = auth;
         singUrl = prefix + "/sing";
         coverUrl = prefix + "/cover/";
         listenUrl = prefix + "/listen/";

@@ -55,6 +55,13 @@ public class UserRepository {
         user.getFollowing().add(toFollow);
     }
 
+    @Transactional
+    public void unfollow(String username, String toFollowUsername) {
+        User user = lookupByName(username);
+        User toFollow = lookupByName(toFollowUsername);
+        user.getFollowing().remove(toFollow);
+    }
+
     public User lookupByName(String user) {
         try {
             return entities.createQuery("SELECT user FROM User user WHERE user.name = :name", User.class)
@@ -65,4 +72,8 @@ public class UserRepository {
         }
     }
 
+    @Transactional
+    public void clear() {
+        entities.createQuery("DELETE FROM User u").executeUpdate();
+    }
 }

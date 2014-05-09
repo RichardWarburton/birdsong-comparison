@@ -43,9 +43,15 @@ public class UserController {
                         @RequestParam("password") String password,
                         HttpServletResponse response) {
         repo.checkUsersPassword(username, password);
-        response.addCookie(new Cookie(USER, username));
-        response.addCookie(new Cookie(PASS, password));
+        addCookie(USER, username, response);
+        addCookie(PASS, password, response);
         return OK;
+    }
+
+    private void addCookie(String key, String value, HttpServletResponse response) {
+        Cookie cookie = new Cookie(key, value);
+        cookie.setPath("/");
+        response.addCookie(cookie);
     }
 
     @RequestMapping(value = "register", method = POST)
@@ -62,6 +68,15 @@ public class UserController {
                          HttpServletRequest request) {
         String user = (String) request.getAttribute("user");
         repo.follow(user, toFollow);
+        return OK;
+    }
+
+    @RequestMapping(value = "unfollow", method = POST)
+    @ResponseBody
+    public String unfollow(@RequestParam("username") String toFollow,
+                           HttpServletRequest request) {
+        String user = (String) request.getAttribute("user");
+        repo.unfollow(user, toFollow);
         return OK;
     }
 

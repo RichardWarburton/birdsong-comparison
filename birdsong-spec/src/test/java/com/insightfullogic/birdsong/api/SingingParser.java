@@ -57,7 +57,6 @@ public class SingingParser {
 
     private Song readSong(final JsonParser parser) throws IOException {
         Song.SongFactory factory = new Song.SongFactory();
-
         assertAtStartOfObject(parser);
         while (parser.nextToken() != END_OBJECT) {
             final String name = parser.getCurrentName();
@@ -76,7 +75,10 @@ public class SingingParser {
                     factory.setTimestamp(parser.getLongValue());
                     break;
                 case "covers":
-                    factory.setCovers(parser.getText());
+                    String text = parser.getText();
+                    if (!text.equals("null")) {
+                        factory.setCovers(text);
+                    }
                     break;
                 default:
                     unknownField(name);

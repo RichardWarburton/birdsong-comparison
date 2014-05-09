@@ -28,7 +28,6 @@ public class UserApi {
     private final String informationUrl;
 
     private final CookieStore cookies;
-    private final Executor executor;
 
     public UserApi(final String prefix) {
         authPrefix = prefix + "user/";
@@ -44,6 +43,12 @@ public class UserApi {
 
     public Executor getExecutor() {
         return executor;
+    }
+
+    private final Executor executor;
+
+    public CookieStore getCookies() {
+        return cookies;
     }
 
     public void login(final String username, final String password) throws IOException {
@@ -93,7 +98,6 @@ public class UserApi {
     }
 
     public Information information(String about) throws IOException {
-        System.out.println(informationUrl + about);
         InputStream data = executor.execute(Request.Get(informationUrl + about))
                                    .returnContent()
                                    .asStream();

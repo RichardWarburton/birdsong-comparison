@@ -33,7 +33,9 @@ public class SpringBootApplicationRunner implements BirdsongApplicationRunner {
 
     @Override
     public void reset() {
-
+        context.getBean(SongRepository.class).clear();
+        context.getBean(UserRepository.class).clear();
+        addUsers();
     }
 
     @Override

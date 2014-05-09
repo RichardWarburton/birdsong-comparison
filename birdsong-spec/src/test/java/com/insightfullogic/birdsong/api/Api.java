@@ -5,7 +5,8 @@ import org.junit.rules.ExternalResource;
 import java.io.IOException;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class Api extends ExternalResource {
 
@@ -40,7 +41,6 @@ public class Api extends ExternalResource {
         Song song = notifies.get(0);
         assertEquals(user, song.getSinger());
         assertEquals(lyrics, song.getSong());
-        assertFalse(song.getCovers().isPresent());
     }
 
 }
